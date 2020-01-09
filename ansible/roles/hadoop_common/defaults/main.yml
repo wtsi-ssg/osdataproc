@@ -1,0 +1,22 @@
+---
+hadoop_version: 3.2.1
+hadoop_mirror: https://archive.apache.org/dist/hadoop/common
+
+hadoop_download_dir: "{{ home }}"
+hadoop_install_dir: /opt/hadoop
+
+hadoop_home: "{{ hadoop_install_dir }}"
+hadoop_user: "{{ user }}"
+hadoop_group: "{{ group }}"
+hadoop_logs_dir: "{{ hadoop_home }}/logs"
+
+hdfs_home: /opt/hdfs
+hdfs_replicas: 1
+hdfs_namenode_dir: "{{ hdfs_home }}/namenode"
+hdfs_datanode_dir: "{{ hdfs_home }}/datanode"
+
+yarn_home: /opt/yarn
+yarn_logs_dir: "{{ yarn_home }}/logs"
+
+aws_java_sdk_version: 1.11.375 # check https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-aws/{{ hadoop_version }}
+

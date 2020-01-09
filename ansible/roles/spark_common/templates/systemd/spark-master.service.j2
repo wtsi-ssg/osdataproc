@@ -1,0 +1,15 @@
+[Unit]
+Description=Spark Master
+After=network.target
+
+[Service]
+Environment=SPARK_HOME={{ spark_home }}
+WorkingDirectory={{ spark_home }}
+ExecStart={{ spark_home }}/sbin/start-master.sh
+User={{ user }}
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

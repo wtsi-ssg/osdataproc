@@ -1,0 +1,27 @@
+---
+
+- name: Start Spark master
+  service: name=spark-master state=started enabled=yes
+
+- name: Install Hail in venv
+  pip:
+          state: present
+          name: "hail=={{ hail_version }}"
+          virtualenv: "{{ venv_dir }}"
+  become: yes
+  become_user: "{{ spark_user }}"
+
+- name: Create extra jars path
+  file:
+          state: directory
+          path: "{{ spark_home }}/jars"
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+
+- name: Install extra jars
+  get_url:
+          url: "{{ jar.url }}"
+          dest: "{{ spark_home }}/jars/{{ jar.filename }}"
+  loop: "{{ hail_extra_jars }}"
+  loop_control:
+          loop_var: jar 

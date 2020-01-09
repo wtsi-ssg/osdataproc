@@ -1,0 +1,54 @@
+---
+
+- name: Ensure Hadoop directories exist
+  file:
+          state: directory
+          path: "{{ item }}"
+          mode: 0755
+          owner: "{{ hadoop_user }}"
+          group: "{{ hadoop_group }}"
+  with_items:
+          - "{{ hadoop_download_dir }}"
+          - "{{ hadoop_install_dir }}"
+          - "{{ hadoop_logs_dir }}"
+          - "{{ hdfs_home }}"
+          - "{{ hdfs_namenode_dir }}"
+          - "{{ hdfs_datanode_dir }}"
+          - "{{ yarn_home }}"
+          - "{{ yarn_logs_dir }}"
+
+- name: Download Hadoop distribution
+  get_url:
+          url: "{{ hadoop_mirror }}/hadoop-{{hadoop_version }}/hadoop-{{hadoop_version}}.tar.gz"
+          dest: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
+          owner: "{{ hadoop_user }}"
+          group: "{{ hadoop_group }}"
+
+- name: Extract Hadoop distribution
+  unarchive:
+          src: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
+          dest: "{{ hadoop_install_dir }}"
+          copy: no
+          owner: "{{ hadoop_user }}"
+          group: "{{ hadoop_group }}"
+          extra_opts: [--strip-components=1]
+
+- name: Copy Hadoop configuration files
+  become: yes
+  template:
+          src: "{{ item }}"
+          dest: "{{ hadoop_home }}/etc/hadoop/{{ item | basename | regex_replace('.j2','') }}"
+          owner: "{{ hadoop_user }}"
+          group: "{{ hadoop_group }}"
+  with_fileglob:
+          - ../templates/*.j2
+
+- name: Create HDFS namenode systemd service file
+  template:
+          src: systemd/hdfs-namenode.service.j2
+          dest: /etc/systemd/system/hdfs-namenode.service
+
+- name: Create HDFS datanode systemd service file
+  template:
+          src: systemd/hdfs-datanode.service.j2
+          dest: /etc/systemd/system/hdfs-datanode.service

@@ -1,0 +1,23 @@
+---
+spark_version: 2.4.4
+spark_mirror: https://archive.apache.org/dist/spark
+
+spark_download_dir: "{{ home }}"
+spark_install_dir: /opt/spark
+
+spark_home: "{{ spark_install_dir }}"
+spark_user: "{{ user }}"
+spark_group: "{{ group }}"
+
+spark_master_host: spark-master
+spark_master_port: 7077
+
+hail_version: 0.2.30
+hail_install_dir: "{{ venv_dir }}"
+hail_home: "{{ hail_install_dir }}"
+hail_extra_jars:
+        - filename: "aws-java-sdk-bundle-{{ aws_java_sdk_version }}.jar"
+          url: "https://search.maven.org/remotecontent?filepath=com/amazonaws/aws-java-sdk-bundle/{{ aws_java_sdk_version }}/aws-java-sdk-bundle-{{ aws_java_sdk_version }}.jar"
+        - filename: "hadoop-aws-{{ hadoop_version }}.jar"
+          url: "https://search.maven.org/remotecontent?filepath=org/apache/hadoop/hadoop-aws/{{ hadoop_version }}/hadoop-aws-{{ hadoop_version }}.jar"
+

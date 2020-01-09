@@ -1,0 +1,7 @@
+*.tfstate*
+.terraform*
+*.egg-info*
+__pycache__*
+*openrc.sh
+.bash_history
+.viminfo

@@ -1,0 +1,13 @@
+---
+
+- hosts: spark_master
+  become: true
+  tasks:
+          - include_role:
+                  name: spark_master
+
+- hosts: spark_slaves
+  become: true
+  tasks:
+          - include_role:
+                  name: spark_slaves

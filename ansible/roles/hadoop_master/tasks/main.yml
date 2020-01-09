@@ -1,0 +1,13 @@
+---
+
+- name: Format namenode
+  become: yes
+  become_user: "{{ hadoop_user }}"
+  command: "{{ hadoop_home }}/bin/hdfs namenode -format -nonInteractive"
+  run_once: yes
+  environment:
+          JAVA_HOME: "{{ java_home }}"
+
+- name: Start HDFS namenode
+  become: yes
+  service: name=hdfs-namenode state=started enabled=yes

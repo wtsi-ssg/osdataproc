@@ -1,0 +1,5 @@
+---
+
+- name: Start HDFS datanode
+  become: yes
+  service: name=hdfs-datanode state=started enabled=yes

@@ -1,0 +1,4 @@
+---
+
+- name: Start Spark slave
+  service: name=spark-slave state=started enabled=yes

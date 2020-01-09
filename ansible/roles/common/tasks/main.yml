@@ -1,0 +1,43 @@
+---
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Install OpenJDK Java 8
+  become: yes
+  apt:
+          name: "{{ packages }}"  
+  vars:
+          packages:    
+                - ca-certificates
+                - openjdk-8-jre-headless
+                - openjdk-8-jdk-headless
+          state: latest 
+
+- name: Install venv
+  become: yes
+  apt:
+          name: python3-venv
+          state: latest
+
+- name: Install scala
+  become: yes
+  apt:
+          name: scala
+          state: latest
+
+- name: Include IP addresses
+  include_vars:
+          file: ../../../terraform/outputs.json
+          name: ip_addresses
+
+- name: Copy hosts file
+  become: yes
+  template:
+          src: hosts.j2
+          dest: /etc/hosts
+
+- name: Create virtualenv
+  become: yes
+  become_user: "{{ user }}"
+  command: "python3 -m venv {{ venv_dir }}" 

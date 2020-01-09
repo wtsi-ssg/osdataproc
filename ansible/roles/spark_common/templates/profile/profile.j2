@@ -1,0 +1,43 @@
+# /etc/profile: system-wide .profile file for the Bourne shell (sh(1))
+# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).
+
+if [ "${PS1-}" ]; then
+  if [ "${BASH-}" ] && [ "$BASH" != "/bin/sh" ]; then
+    # The file bash.bashrc already sets the default PS1.
+    # PS1='\h:\w\$ '
+    if [ -f /etc/bash.bashrc ]; then
+      . /etc/bash.bashrc
+    fi
+  else
+    if [ "`id -u`" -eq 0 ]; then
+      PS1='# '
+    else
+      PS1='$ '
+    fi
+  fi
+fi
+
+if [ -d /etc/profile.d ]; then
+  for i in /etc/profile.d/*.sh; do
+    if [ -r $i ]; then
+      . $i
+    fi
+  done
+  unset i
+fi
+
+export PATH=$PATH:{{ hadoop_home }}/bin:{{ hadoop_home }}/sbin:{{ spark_home }}/bin
+export HADOOP_HOME={{ hadoop_home }}
+export HADOOP_CONF_DIR={{ hadoop_home }}/etc/hadoop
+export HDFS_NAMENODE_USER={{ hadoop_user }}
+export HDFS_DATANODE_USER={{ hadoop_user }}
+export HDFS_SECONDARYNAMENODE_USER={{ hadoop_user }}
+export JAVA_HOME={{ java_home }}
+export HADOOP_MAPRED_HOME={{ hadoop_home }}
+export HADOOP_COMMON_HOME={{ hadoop_home }}
+export HADOOP_HDFS_HOME={{ hadoop_home }}
+export HADOOP_YARN_HOME={{ hadoop_home }}
+
+source "{{ venv_dir }}/bin/activate"
+export SPARK_HOME={{ spark_home }}
+export HAIL_HOME=$(pip3 show hail | grep Location | awk -F' ' '{print $2 "/hail"}')

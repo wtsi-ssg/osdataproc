@@ -1,0 +1,53 @@
+---
+
+- name: Copy /etc/profile template file
+  become: yes
+  template:
+          src: profile/profile.j2
+          dest: /etc/profile
+          owner: root
+          group: root
+
+
+- name: Ensure Spark directories exist
+  file:
+          state: directory
+          path: "{{ item }}"
+          mode: 0755
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+  with_items:
+          - "{{ spark_download_dir }}"
+          - "{{ spark_install_dir }}"
+
+- name: Download Spark distribution
+  get_url:
+          url: "{{ spark_mirror }}/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
+          dest: "{{ spark_download_dir }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+
+- name: Extract Spark distribution
+  unarchive:
+          src: "{{ spark_download_dir }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
+          dest: "{{ spark_install_dir }}"
+          copy: no
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+          extra_opts: [--strip-components=1]
+
+- name: Copy Spark configuration files
+  become: yes
+  template:
+          src: "{{ item }}"
+          dest: "{{ spark_home }}/conf/{{ item | basename | regex_replace('.j2','') }}"
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+  with_fileglob:
+          - ../templates/*.j2
+
+- name: Create Spark master systemd service file
+  template: src=systemd/spark-master.service.j2 dest=/etc/systemd/system/spark-master.service
+
+- name: Create Spark slave systemd service file
+  template: src=systemd/spark-slave.service.j2 dest=/etc/systemd/system/spark-slave.service

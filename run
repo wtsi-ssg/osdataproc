@@ -1,0 +1,79 @@
+#!/bin/bash
+
+source ${PWD}/openrc.sh
+
+export TF_VAR_os_user_name=$OS_USERNAME
+export TF_VAR_os_tenant_name=$OS_PROJECT_NAME
+export TF_VAR_os_password=$OS_PASSWORD
+export TF_VAR_os_auth_url=$OS_AUTH_URL
+export TF_VAR_os_region_name=$OS_REGION_NAME
+export TF_VAR_os_interface=$OS_INTERFACE
+
+echo "sourced TF_VARs"
+export TF_VAR_cluster_name=$2
+if [[ $3 =~ ^[0-9]+$ ]] ; then
+	export TF_VAR_slaves=$(($3))
+fi
+if [[ $4 == "None" ]] ; then
+	echo "default slave flavor chosen"
+else
+	export TF_VAR_slave_flavor_name=$4
+fi
+export TF_VAR_spark_keypair=$5
+if [[ -f $6 ]] ; then {
+	echo $6
+	export TF_VAR_identity_file=$(< $6)
+	}
+elif [[ $6 == "None" ]] ; then
+	echo $6
+fi
+
+case $1 in
+	init)
+		cd terraform && terraform init -input=false
+		exit 0
+		;;
+	apply)
+		cd terraform
+	       	terraform workspace \select $2 || terraform workspace new $2
+	        terraform plan -out="terraform.tfstate.d/$2/plan" -input=false
+		terraform apply -input=false "terraform.tfstate.d/$2/plan"
+		terraform output -json > outputs.json
+		exit 0
+		;;
+	destroy)
+		cd terraform
+	        if ! terraform workspace \select $2 ; then
+			echo "cluster not found"
+			exit 0
+		else
+			terraform workspace \select $2 && \
+			terraform destroy && \
+			terraform workspace \select default && \
+			terraform workspace delete $2 && \
+			exit 0
+		fi
+		;;
+	#update)
+	#	cd terraform
+	#	terraform workspace \select $2 
+	#	echo $3
+	#	#echo "variable "slaves" { default = ${3} } " > override.tf
+	#	cp variables.tf terraform.tfstate.d/$2/
+	#	terraform refresh -var "slaves=$3" terraform.tfstate.d/$2/
+		#terraform apply -input=false "$2-plan"
+	#	rm override.tf
+	#	exit 0
+	#	;;
+        ansible_master)
+		ansible-playbook -i hosts_master ansible/main.yml > ansible_master.log 2>&1
+		exit 0
+		;;
+	ansible_slaves)
+		ansible-playbook -i hosts_slaves ansible/main.yml > ansible_slaves.log 2>&1
+		exit 0
+		;;
+	*)
+		exit 0
+		;;
+esac

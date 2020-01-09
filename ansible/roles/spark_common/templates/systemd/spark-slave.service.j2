@@ -1,0 +1,15 @@
+[Unit]
+Description=Spark Slave
+After=network.target
+
+[Service]
+Environment=SPARK_HOME={{ spark_home }}
+WorkingDirectory={{ spark_home }}
+ExecStart={{ spark_home }}/sbin/start-slave.sh spark://{{ spark_master_private_ip }}:{{ spark_master_port }}
+User={{ user }}
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

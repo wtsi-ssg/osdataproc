@@ -1,0 +1,7 @@
+---
+user: ubuntu
+group: ubuntu
+home: "/home/{{ user }}"
+java_home: /usr
+
+venv_dir: "{{ home }}/venv"
