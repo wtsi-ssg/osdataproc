@@ -1,0 +1,13 @@
+[Unit]
+Description=Jupyter Lab
+After=network.target
+
+[Service]
+ExecStart={{ venv_dir }}/bin/jupyter lab --config={{ home }}/.jupyter/jupyter_notebook_config.py
+User={{ user }}
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
