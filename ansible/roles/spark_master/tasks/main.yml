@@ -3,10 +3,12 @@
 - name: Start Spark master
   service: name=spark-master state=started enabled=yes
 
-- name: Install Hail in venv
+- name: Install Hail and Jupyter in venv
   pip:
           state: present
-          name: "hail=={{ hail_version }}"
+          name: 
+            - "hail=={{ hail_version }}"
+            - jupyterlab
           virtualenv: "{{ venv_dir }}"
   become: yes
   become_user: "{{ spark_user }}"
@@ -25,3 +27,31 @@
   loop: "{{ hail_extra_jars }}"
   loop_control:
           loop_var: jar 
+
+- name: Create Jupyter directories
+  file:
+          state: directory
+          path: "{{ dir }}"
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+  loop:
+          - "{{ home }}/.jupyter"
+          - "{{ home }}/jupyter"
+  loop_control:
+          loop_var: dir
+
+- name: Create Jupyter config file
+  become: yes
+  template:
+          src: jupyter_notebook_config.py.j2
+          dest: "{{ home }}/.jupyter/jupyter_notebook_config.py"
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+
+- name: Create Jupyter Lab service
+  template:
+          src: jupyter-lab.service.j2
+          dest: /etc/systemd/system/jupyter-lab.service
+
+- name: Start Jupyter Lab
+  service: name=jupyter-lab state=started enabled=yes

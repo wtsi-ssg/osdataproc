@@ -43,6 +43,6 @@ resource "openstack_compute_instance_v2" "spark_slave" {
   }
 
   provisioner "local-exec" {
-    command = "echo '[spark_slaves]\n${self.access_ip_v4}' >> ../hosts_slaves"
+    command = "echo '[spark_slaves]\n${self.access_ip_v4}' >> terraform.tfstate.d/${var.cluster_name}/hosts_slaves"
   }
 }

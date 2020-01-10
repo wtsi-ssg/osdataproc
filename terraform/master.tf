@@ -114,6 +114,6 @@ resource "null_resource" "master_setup" {
   }
 
   provisioner "local-exec" {
-    command = "echo '[spark_master]\n${openstack_networking_floatingip_v2.public_ip.0.address}' > ../hosts_master"
+    command = "echo '[spark_master]\n${openstack_networking_floatingip_v2.public_ip.0.address}' > terraform.tfstate.d/${var.cluster_name}/hosts_master"
   }
 }

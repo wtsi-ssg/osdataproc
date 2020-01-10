@@ -1,30 +1,36 @@
 import argparse
 import subprocess
+import os
+import sys
 
 def create(args):
+    osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = get_args(args, 'apply')
-    subprocess.run(['./run', 'init'])
+    subprocess.run([f'{osdataproc_home}/run', 'init'])
     subprocess.run(run_args)
-    subprocess.Popen(['./run', 'ansible_master'])
-    subprocess.Popen(['./run', 'ansible_slaves'])
+#    subprocess.Popen([f'{osdataproc_home}/run', 'ansible_master'])
+#    subprocess.Popen([f'{osdataproc_home}/run', 'ansible_slaves'])
 
 def destroy(args):
+    osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = get_args(args, 'destroy')
     subprocess.run(run_args)
 
 def update(args):
+    osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = get_args(args, 'update')
     subprocess.run(run_args)
-    subprocess.run(['./run', 'ansible_slaves'])
+    subprocess.run([f'{osdataproc_home}/run', 'ansible_slaves'])
 
 def get_args(args, command):
-    run_args = ['./run', command]
+    osdataproc_home = os.path.dirname(os.path.realpath(__file__))
+    run_args = [f'{osdataproc_home}/run', command]
     for val in vars(args):
         run_args.append(str(vars(args)[val]))
     return run_args
 
 def cli():
-    '''Example script'''
+    '''osdataproc'''
     parser = argparse.ArgumentParser(description='CLI tool to manage a Spark cluster')
     subparsers = parser.add_subparsers()
 
