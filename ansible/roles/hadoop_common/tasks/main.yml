@@ -33,6 +33,11 @@
           group: "{{ hadoop_group }}"
           extra_opts: [--strip-components=1]
 
+- name: Delete Hadoop distribution file
+  file:
+          path: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
+          state: absent
+
 - name: Copy Hadoop configuration files
   become: yes
   template:

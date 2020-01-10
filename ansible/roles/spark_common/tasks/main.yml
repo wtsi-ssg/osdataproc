@@ -36,6 +36,11 @@
           group: "{{ spark_group }}"
           extra_opts: [--strip-components=1]
 
+- name: Delete Spark distribution file
+  file:
+          path: "{{ spark_download_dir }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
+          state: absent
+
 - name: Copy Spark configuration files
   become: yes
   template:
