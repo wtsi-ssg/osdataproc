@@ -3,6 +3,7 @@ Description=Jupyter Lab
 After=network.target
 
 [Service]
+Environment=SPARK_HOME={{ spark_home }}
 ExecStart={{ venv_dir }}/bin/jupyter lab --config={{ home }}/.jupyter/jupyter_notebook_config.py
 User={{ user }}
 KillMode=process
