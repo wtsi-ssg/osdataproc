@@ -94,26 +94,8 @@ resource "openstack_compute_instance_v2" "spark_master" {
   network {
     name = "cloudforms_network"
   }
-}
-
-resource "null_resource" "master_setup" {
-  triggers = {
-    cluster_instance_ids = "${join(",", openstack_compute_instance_v2.spark_master.*.id)}"
-  }
-
-  depends_on = [openstack_compute_floatingip_associate_v2.public_ip]
-
-  connection {
-    host        = tostring(openstack_networking_floatingip_v2.public_ip.0.address)
-    private_key = file("/home/ubuntu/.ssh/id_rsa")
-    user        = "ubuntu"
-  }
-
-  provisioner "remote-exec" {
-    script = "../ansible/setup_common.sh"              
-  }
 
   provisioner "local-exec" {
-    command = "echo '[spark_master]\n${openstack_networking_floatingip_v2.public_ip.0.address}' > terraform.tfstate.d/${var.cluster_name}/hosts_master"
+    command = "echo '[spark_master]\nubuntu@${openstack_networking_floatingip_v2.public_ip.0.address}' > terraform.tfstate.d/${var.cluster_name}/hosts_master"
   }
 }

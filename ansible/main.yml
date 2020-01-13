@@ -3,11 +3,17 @@
 - hosts: spark_master
   become: true
   tasks:
+          - name: Wait 600 seconds for target connection to become useable
+            wait_for_connection:
+
           - include_role:
                   name: spark_master
 
 - hosts: spark_slaves
   become: true
   tasks:
+          - name: Wait 600 seconds for target connection to become useable
+            wait_for_connection:
+
           - include_role:
                   name: spark_slaves

@@ -8,8 +8,6 @@ def create(args):
     run_args = get_args(args, 'apply')
     subprocess.run([f'{osdataproc_home}/run', 'init'])
     subprocess.run(run_args)
-#    subprocess.Popen([f'{osdataproc_home}/run', 'ansible_master'])
-#    subprocess.Popen([f'{osdataproc_home}/run', 'ansible_slaves'])
 
 def destroy(args):
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))

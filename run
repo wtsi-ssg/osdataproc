@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export OSDP_HOME=$(pip3 show osdataproc | grep Location | awk -F' ' '{print $2}')
+OSDP=$(readlink -f "$0")
+OSDP_HOME=$(dirname "$OSDP")
 source ${OSDP_HOME}/openrc.sh
 
 export TF_VAR_os_user_name=$OS_USERNAME
@@ -29,11 +30,11 @@ elif [[ $6 == "None" ]] ; then
 fi
 
 ansible_master () {
-	ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_master ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3'> ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-master.log 2>&1
+	ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_master ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e 'host_key_checking=False' > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-master.log 2>&1
 }
 
 ansible_slaves () {
-	ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_slaves ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-slaves.log 2>&1
+	ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_slaves ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e 'host_key_checking=False' > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-slaves.log 2>&1
 }
 
 case $1 in
