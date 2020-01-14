@@ -12,13 +12,14 @@ def create(args):
 def destroy(args):
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = get_args(args, 'destroy')
+    subprocess.run([f'{osdataproc_home}/run', 'init'])
     subprocess.run(run_args)
 
 def update(args):
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = get_args(args, 'update')
+    subprocess.run([f'{osdataproc_home}/run', 'init'])
     subprocess.run(run_args)
-    subprocess.run([f'{osdataproc_home}/run', 'ansible_slaves'])
 
 def get_args(args, command):
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
