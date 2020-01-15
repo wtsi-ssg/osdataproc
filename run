@@ -2,7 +2,6 @@
 
 OSDP=$(readlink -f "$0")
 OSDP_HOME=$(dirname "$OSDP")
-source ${OSDP_HOME}/openrc.sh
 
 export TF_VAR_os_user_name=$OS_USERNAME
 export TF_VAR_os_tenant_name=$OS_PROJECT_NAME

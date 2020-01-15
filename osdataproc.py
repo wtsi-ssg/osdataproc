@@ -4,6 +4,8 @@ import os
 import sys
 
 def create(args):
+    if "OS_USERNAME" not in os.environ:
+        sys.exit("openrc.sh must be sourced")
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = get_args(args, 'apply')
     subprocess.run([f'{osdataproc_home}/run', 'init'])
@@ -38,7 +40,7 @@ def cli():
     group = parser_create.add_mutually_exclusive_group(required=True)
 
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
-    parser_create.add_argument('-n', '--num-workers', default='2', type=int, help='number of worker nodes')
+    parser_create.add_argument('-n', '--num-slaves', default='2', type=int, help='number of worker nodes')
     parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
     group.add_argument('-k', '--keypair', help='OpenStack keypair to use')
     group.add_argument('-i', '--identity-file', help='path to public key file')
@@ -52,7 +54,7 @@ def cli():
 
     parser_update = subparsers.add_parser('update', help='resize a Spark cluster')
     parser_update.add_argument('cluster-name', help='name of the cluster to resize')
-    parser_update.add_argument('-n', '--num-workers', type=int, help='number of worker nodes')
+    parser_update.add_argument('-n', '--num-slaves', type=int, help='number of worker nodes')
     parser_update.set_defaults(func=update)
 
     args = parser.parse_args()
