@@ -20,10 +20,8 @@ else
 	export TF_VAR_slave_flavor_name=$4
 fi
 export TF_VAR_spark_keypair=$5
-if [[ -f $6 ]] ; then {
-	echo $6
+if [[ -f $6 ]] ; then
 	export TF_VAR_identity_file=$(< $6)
-	}
 elif [[ $6 == "None" ]] ; then
 	echo $6
 fi
@@ -56,14 +54,13 @@ case $1 in
 		cd ${OSDP_HOME}/terraform
 	        if ! terraform workspace \select $2 ; then
 			echo "cluster not found"
-			exit 0
 		else
 			terraform workspace \select $2 && \
 			terraform destroy && \
 			terraform workspace \select default && \
-			terraform workspace delete $2 && \
-			exit 0
+			terraform workspace delete $2
 		fi
+		exit 0
 		;;
 	#update)
 	#	cd ${OSDP_HOME}/terraform

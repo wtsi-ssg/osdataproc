@@ -4,22 +4,19 @@ import os
 import sys
 
 def create(args):
+    act(args, 'apply')
+
+def destroy(args):
+    act(args, 'destroy')
+
+def update(args):
+    act(args, 'update')
+
+def act(args, command):
     if "OS_USERNAME" not in os.environ:
         sys.exit("openrc.sh must be sourced")
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
-    run_args = get_args(args, 'apply')
-    subprocess.run([f'{osdataproc_home}/run', 'init'])
-    subprocess.run(run_args)
-
-def destroy(args):
-    osdataproc_home = os.path.dirname(os.path.realpath(__file__))
-    run_args = get_args(args, 'destroy')
-    subprocess.run([f'{osdataproc_home}/run', 'init'])
-    subprocess.run(run_args)
-
-def update(args):
-    osdataproc_home = os.path.dirname(os.path.realpath(__file__))
-    run_args = get_args(args, 'update')
+    run_args = get_args(args, command)
     subprocess.run([f'{osdataproc_home}/run', 'init'])
     subprocess.run(run_args)
 
