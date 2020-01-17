@@ -1,6 +1,6 @@
 # osdataproc
 
-osdataproc is a command-line tool for creating an OpenStack cluster with Apache Spark and Apache Hadoop configured. It also comes with Jupyter Lab installed.
+osdataproc is a command-line tool for creating an OpenStack cluster with [Apache Spark](https://spark.apache.org/) and [Apache Hadoop](https://hadoop.apache.org/) configured. It also comes with [JupyterLab](https://jupyter.org/) installed.
 
 ### Setup
 
@@ -16,7 +16,7 @@ You can then run the `osdataproc` command as shown below. `osdataproc --help`, o
 
 ### Example usage
 
-`osdataproc create -n 4 -i ~/.ssh/id_rsa.pub --flavor m1.medium sparkcluster`
+`osdataproc create --num-slaves 4 --flavor m1.medium -i ~/.ssh/id_rsa.pub  sparkcluster`
 
 `osdataproc destroy sparkcluster`
 
@@ -27,6 +27,6 @@ You can view the HDFS webUI at <spark_master_public_ip>:9870, and Spark webUI at
 
 ### Notes
 
-*  Ansible runs in the Docker container, so do not prematurely close the container, or the instances will not be correctly configured - you can detach it with `Ctrl` + `P` + `Q`, and then reattach with `docker attach <container_id>` (container_id is found with `docker container ls`).
 *  If your private key has a passphrase, Ansible will not be able to connect to the created instances unless you add your key to ssh-agent from within the container. It is recommended to use a passphraseless private key, but to use a passphrase you can type `eval $(ssh-agent)` and `ssh-add`, entering your private key passphrase when prompted. Then go on to create your cluster as above.
+*  Ansible runs in the Docker container, so do not prematurely close the container, or the instances will not be correctly configured - you can detach it with `Ctrl` + `P` + `Q`, and then reattach with `docker attach <container_id>` (container_id is found with `docker container ls`). Re-run your create command to finish an incomplete configuration.
 *  You can view Ansible logs at $HOME/state/\<cluster-name\>/ansible-{master,slaves}.log to see the provisioning state of your instances.
