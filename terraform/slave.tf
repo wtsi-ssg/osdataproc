@@ -1,5 +1,5 @@
 resource "openstack_networking_secgroup_v2" "spark_slave" {
-  name = "spark_slave_secgroup"
+  name = "${var.os_user_name}_${var.cluster_name}_slaves_secgroup"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "spark_slave_all" {
@@ -10,24 +10,6 @@ resource "openstack_networking_secgroup_rule_v2" "spark_slave_all" {
   port_range_max    = 65535
   security_group_id = openstack_networking_secgroup_v2.spark_slave.id
 }
-
-//resource "openstack_networking_secgroup_rule_v2" "spark_slave_master_in" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections from a master node"
-//  protocol          = "tcp"
-//  remote_group_id   = openstack_networking_secgroup_v2.spark_master.id
-//  security_group_id = openstack_networking_secgroup_v2.spark_slave.id
-//}
-//
-//resource "openstack_networking_secgroup_rule_v2" "spark_slave_slave_in" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections from a slave node"
-//  protocol          = "tcp"
-//  remote_group_id   = openstack_networking_secgroup_v2.spark_slave.id
-//  security_group_id = openstack_networking_secgroup_v2.spark_slave.id
-//}
 
 resource "openstack_compute_instance_v2" "spark_slave" {
   name            = format("${var.os_user_name}_${var.cluster_name}_slave_%02d",count.index+1)
