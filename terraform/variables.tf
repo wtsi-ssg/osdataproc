@@ -33,11 +33,11 @@ variable "image_name" {
 }
 
 variable "master_flavor_name" {
-  default = "o2.medium"
+  default = "m1.medium"
 }
 
 variable "slave_flavor_name" {
-  default = "o2.medium"
+  default = "m1.small"
 }
 
 variable "spark_master_public_ip" {
@@ -51,10 +51,5 @@ variable "spark_keypair" {
 }
 
 variable "identity_file" {
-  default = "/home/ubuntu/.ssh/id_rsa.pub"
-}
-
-// TODO create security groups
-variable "security_groups" {
-  default = ["tf_wideopen"]
+  default = "/root/.ssh/id_rsa.pub"
 }

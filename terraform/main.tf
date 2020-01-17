@@ -14,7 +14,7 @@ resource "openstack_compute_floatingip_associate_v2" "public_ip" {
 
 resource "openstack_compute_keypair_v2" "spark_keypair" {
   //name = var.spark_keypair == "None" ? "spark_keypair" : var.spark_keypair
-  name = "spark_keypair"
+  name = "${var.os_user_name}_${var.cluster_name}_keypair"
   count = var.spark_keypair == "None" ? 1 : 0
   public_key = var.identity_file
 }
