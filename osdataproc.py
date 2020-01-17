@@ -37,7 +37,7 @@ def cli():
     group = parser_create.add_mutually_exclusive_group(required=True)
 
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
-    parser_create.add_argument('-n', '--num-slaves', default='2', type=int, help='number of worker nodes')
+    parser_create.add_argument('-n', '--num-slaves', default='2', type=int, help='number of slave nodes')
     parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
     group.add_argument('-k', '--keypair', help='OpenStack keypair to use')
     group.add_argument('-i', '--identity-file', help='path to public key file')
@@ -51,7 +51,7 @@ def cli():
 
     parser_update = subparsers.add_parser('update', help='resize a Spark cluster')
     parser_update.add_argument('cluster-name', help='name of the cluster to resize')
-    parser_update.add_argument('-n', '--num-slaves', type=int, help='number of worker nodes')
+    parser_update.add_argument('-n', '--num-slaves', type=int, help='number of slave nodes')
     parser_update.set_defaults(func=update)
 
     args = parser.parse_args()
