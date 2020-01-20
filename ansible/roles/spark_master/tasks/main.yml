@@ -40,6 +40,11 @@
   loop_control:
           loop_var: dir
 
+- name: Generate Jupyter password
+  shell: "{{ venv_dir }}/bin/python -c \"from notebook.auth import passwd ; print(passwd('{{ password }}'))\""
+  register: jupyter_notebookapp_password
+  changed_when: false
+
 - name: Create Jupyter config file
   become: yes
   template:

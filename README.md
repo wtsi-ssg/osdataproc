@@ -22,7 +22,7 @@ You can then run the `osdataproc` command as shown below. `osdataproc --help`, o
 
 `osdataproc create` will output the public ip (172.x.x.x) of your master node when finished. You can connect to this with `ssh ubuntu@172.x.x.x` from the spark-runner server. It will take a few minutes for the configuration to complete.
 
-From here you can access Jupyter Lab online at <spark_master_public_ip>:8888 (the token can be obtained by running `jupyter notebook list` from the master and copying the token from the url).
+From here you can access Jupyter Lab online at <spark_master_public_ip>:8888 (the default password is "jupyter". This can be changed if you desire by running `jupyter notebook password` and entering your new password, then restarting the server with `sudo systemctl restart jupyter-lab.service`).
 You can view the HDFS webUI at <spark_master_public_ip>:9870, and Spark webUI at <spark_master_public_ip>:8080.
 
 ### Notes

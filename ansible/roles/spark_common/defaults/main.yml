@@ -21,3 +21,5 @@ hail_extra_jars:
         - filename: "hadoop-aws-{{ hadoop_version }}.jar"
           url: "https://search.maven.org/remotecontent?filepath=org/apache/hadoop/hadoop-aws/{{ hadoop_version }}/hadoop-aws-{{ hadoop_version }}.jar"
 
+
+password: jupyter
