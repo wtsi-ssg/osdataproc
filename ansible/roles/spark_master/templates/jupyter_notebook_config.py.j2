@@ -2,3 +2,4 @@ c.NotebookApp.ip = '{{ spark_master_private_ip }}'
 c.NotebookApp.open_browser = False
 c.NotebookApp.port = 8888
 c.NotebookApp.notebook_dir = '{{ home }}/jupyter'
+c.NotebookApp.password = "{{ jupyter_notebookapp_password.stdout }}"
