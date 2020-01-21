@@ -70,4 +70,5 @@
 
 export SPARK_DIST_CLASSPATH=$({{ hadoop_home }}/bin/hadoop classpath):{{ spark_home }}/jars/*
 export SPARK_MASTER_HOST='{{ spark_master_private_ip }}'
+export PYSPARK_PYTHON={{ venv_dir }}/bin/python
 export JAVA_HOME={{ java_home }}
