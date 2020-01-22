@@ -53,6 +53,9 @@
 
 - name: Create Spark master systemd service file
   template: src=systemd/spark-master.service.j2 dest=/etc/systemd/system/spark-master.service
+ 
+- name: Create Spark history server systemd service file
+  template: src=systemd/spark-history-server.service.j2 dest=/etc/systemd/system/spark-history-server.service
 
 - name: Create Spark slave systemd service file
   template: src=systemd/spark-slave.service.j2 dest=/etc/systemd/system/spark-slave.service
