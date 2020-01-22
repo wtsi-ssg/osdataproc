@@ -4,3 +4,7 @@ spark.executor.extraClassPath    ./hail-all-spark.jar
 spark.serializer                 org.apache.spark.serializer.KryoSerializer
 spark.kryo.registrator           is.hail.kryo.HailKryoRegistrator
 spark.jars                       {{ hail_home }}/lib/python3.6/site-packages/hail/hail-all-spark.jar,{{ hadoop_home }}/share/hadoop/tools/lib/aws-java-sdk-bundle-{{ aws_java_sdk_version }}.jar,{{ hadoop_home }}/share/hadoop/tools/lib/hadoop-aws-{{ hadoop_version }}.jar
+
+spark.history.fs.logDirectory    hdfs:///shared/spark-logs
+spark.eventLog.enabled           true
+spark.eventLog.dir               hdfs:///shared/spark-logs
