@@ -3,9 +3,6 @@
 - name: Start Spark master
   service: name=spark-master state=started enabled=yes
 
-- name: Create HDFS Spark log directory
-  command: "{{ hadoop_home }}/bin/hdfs dfs -mkdir -p /shared/spark-logs"
-
 - name: Start Spark history server
   service: name=spark-history-server state=started enabled=yes
 

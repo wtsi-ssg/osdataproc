@@ -13,3 +13,10 @@
 - name: Start HDFS namenode
   become: yes
   service: name=hdfs-namenode state=started enabled=yes
+
+- name: Create HDFS user directory
+  command: "{{ hadoop_home }}/bin/hdfs dfs -mkdir -p /user/{{ hadoop_user }}"
+
+- name: Create HDFS Spark log directory
+  command: "{{ hadoop_home }}/bin/hdfs dfs -mkdir -p /shared/spark-logs"
+

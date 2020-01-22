@@ -37,7 +37,9 @@ export HADOOP_MAPRED_HOME={{ hadoop_home }}
 export HADOOP_COMMON_HOME={{ hadoop_home }}
 export HADOOP_HDFS_HOME={{ hadoop_home }}
 export HADOOP_YARN_HOME={{ hadoop_home }}
+#default TERM causes spark-shell error (https://github.com/sanori/spark-sbt/issues/4)
+export TERM=xterm-color
 
-source "{{ venv_dir }}/bin/activate"
+. "{{ venv_dir }}/bin/activate"
 export SPARK_HOME={{ spark_home }}
 export HAIL_HOME=$(pip3 show hail | grep Location | awk -F' ' '{print $2 "/hail"}')
