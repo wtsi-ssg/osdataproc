@@ -39,6 +39,8 @@
   template:
           src: hosts.j2
           dest: /etc/hosts
+  tags:
+          - hosts
 
 - name: Create virtualenv
   become: yes
