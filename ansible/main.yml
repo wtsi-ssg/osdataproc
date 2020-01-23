@@ -19,7 +19,6 @@
 
           - include_role:
                   name: spark_slaves
-
 - hosts: localhost
   become: true
   gather_facts: no
@@ -29,5 +28,3 @@
 
           - include_role:
                   name: spark_slaves
-
-

@@ -31,6 +31,8 @@
   include_vars:
           file: ../../../terraform/outputs.json
           name: ip_addresses
+  tags: 
+        - hosts
 
 - name: Copy hosts file
   become: yes
