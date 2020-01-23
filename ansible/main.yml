@@ -19,3 +19,15 @@
 
           - include_role:
                   name: spark_slaves
+
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+          - name: Wait 600 seconds for target connection to become useable
+            wait_for_connection:
+
+          - include_role:
+                  name: spark_slaves
+
+
