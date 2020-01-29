@@ -48,3 +48,6 @@
 
 - name: Start Jupyter Lab
   service: name=jupyter-lab state=started enabled=yes
+
+- name: Install Netdata
+  shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"

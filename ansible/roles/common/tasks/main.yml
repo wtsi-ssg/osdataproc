@@ -6,14 +6,11 @@
 - name: Install OpenJDK Java 8
   become: yes
   apt:
-          name: "{{ packages }}"  
-  vars:
-          packages:    
+          pkg:    
                 - software-properties-common
                 - ca-certificates
                 - openjdk-8-jre-headless
                 - openjdk-8-jdk-headless
-          state: latest 
 
 - name: Install venv
   become: yes
@@ -26,6 +23,19 @@
   apt:
           name: scala
           state: latest
+
+- name: Install Netdata packages
+  become: yes
+  apt:
+          name: "{{ netdata_pkgs }}"
+          state: latest
+
+- name: Download Netdata repo
+  git:
+          repo: https://github.com/netdata/netdata.git
+          dest: "{{ netdata_dir }}"
+          version: master
+          depth: 100
 
 - name: Include IP addresses
   include_vars:
