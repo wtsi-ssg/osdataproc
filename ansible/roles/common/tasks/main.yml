@@ -1,5 +1,8 @@
 ---
 
+- name: Gather facts after connection
+  setup:
+
 - name: Update apt cache
   apt: update_cache=yes
 
