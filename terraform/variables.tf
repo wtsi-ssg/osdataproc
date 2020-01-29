@@ -32,12 +32,8 @@ variable "image_name" {
   default = "bionic-server"
 }
 
-variable "master_flavor_name" {
+variable "flavor_name" {
   default = "m1.medium"
-}
-
-variable "slave_flavor_name" {
-  default = "m1.small"
 }
 
 variable "spark_master_public_ip" {

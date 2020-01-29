@@ -1,4 +1,9 @@
 spark.master                     spark://{{ spark_master_private_ip }}:{{ spark_master_port }}
+
+spark.driver.memory              {{ (ansible_memtotal_mb - 2048) | int() }}m
+spark.executor.memory            {{ (ansible_memtotal_mb - 2048) | int() }}m
+spark.executor.instances         1
+
 spark.driver.extraClassPath      {{ hail_home }}/hail-all-spark.jar
 spark.executor.extraClassPath    ./hail-all-spark.jar
 spark.serializer                 org.apache.spark.serializer.KryoSerializer
