@@ -58,16 +58,6 @@
   with_fileglob:
           - ../templates/systemd/*.j2 
 
-            #- name: Create HDFS namenode systemd service file
-            #  template:
-            #          src: systemd/hdfs-namenode.service.j2
-            #          dest: /etc/systemd/system/hdfs-namenode.service
-            #
-            #- name: Create HDFS datanode systemd service file
-            #  template:
-            #          src: systemd/hdfs-datanode.service.j2
-            #          dest: /etc/systemd/system/hdfs-datanode.service
-
 - name: Ensure netdata HDFS directory exists
   file:
           state: directory
