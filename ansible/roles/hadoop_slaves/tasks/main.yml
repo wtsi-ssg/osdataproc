@@ -3,3 +3,7 @@
 - name: Start HDFS datanode
   become: yes
   service: name=hdfs-datanode state=started enabled=yes
+
+- name: Start Yarn node manager
+  become: yes
+  service: name=yarn-nm state=started enabled=yes
