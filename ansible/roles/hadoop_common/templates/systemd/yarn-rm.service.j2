@@ -1,5 +1,5 @@
 [Unit]
-Description=HDFS NameNode
+Description=Yarn Resource Manager
 After=network.target
 
 [Service]
@@ -7,8 +7,8 @@ Type=forking
 Environment=JAVA_HOME={{ java_home }}
 Environment=HADOOP_HOME={{ hadoop_home }}
 WorkingDirectory={{ hadoop_home }}
-ExecStart={{ hadoop_home }}/bin/hdfs --daemon start namenode
-ExecStop={{ hadoop_home }}/bin/hdfs --daemon stop namenode
+ExecStart={{ hadoop_home }}/bin/yarn --daemon start resourcemanager
+ExecStop={{ hadoop_home }}/bin/yarn --daemon stop resourcemanager
 User={{ hadoop_user }}
 KillMode=process
 KillSignal=SIGINT
