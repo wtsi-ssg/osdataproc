@@ -23,8 +23,4 @@ resource "openstack_compute_instance_v2" "spark_slave" {
   network {
     name = "cloudforms_network"
   }
-
-  provisioner "local-exec" {
-    command = "echo '[spark_slaves]\nubuntu@${self.access_ip_v4}' >> terraform.tfstate.d/${var.cluster_name}/hosts_slaves"
-  }
 }

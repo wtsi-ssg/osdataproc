@@ -42,7 +42,6 @@ case $1 in
 		terraform apply -input=false "terraform.tfstate.d/$2/plan"
 		terraform output -json > outputs.json
 		ansible "master" & 
-		ansible "slaves" &
 		exit 0
 		;;
 	destroy)
