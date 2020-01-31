@@ -14,6 +14,14 @@
   become: yes
   service: name=hdfs-namenode state=started enabled=yes
 
+- name: Start Yarn resource manager
+  become: yes
+  service: name=yarn-rm state=started enabled=yes
+
+- name: Start MapReduce JobHistory server
+  become: yes
+  service: name=mapred-history state=started enabled=yes
+
 - name: Create HDFS user directory
   command: "{{ hadoop_home }}/bin/hdfs dfs -mkdir -p /user/{{ hadoop_user }}"
 

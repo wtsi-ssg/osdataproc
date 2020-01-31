@@ -5,3 +5,23 @@ home: "/home/{{ user }}"
 java_home: /usr
 
 venv_dir: "{{ home }}/venv"
+netdata_dir: /opt/netdata
+netdata_pkgs: 
+        - zlib1g-dev
+        - uuid-dev
+        - libuv1-dev
+        - liblz4-dev
+        - libjudy-dev
+        - libssl-dev
+        - libmnl-dev
+        - gcc
+        - make
+        - git
+        - autoconf
+        - autoconf-archive
+        - autogen
+        - automake
+        - pkg-config
+        - curl
+        - python
+

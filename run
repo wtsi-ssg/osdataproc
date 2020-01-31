@@ -15,9 +15,9 @@ if [[ $3 =~ ^[0-9]+$ ]] ; then
 	export TF_VAR_slaves=$(($3))
 fi
 if [[ $4 == "None" ]] ; then
-	echo "default slave flavor chosen"
+	echo "default flavor chosen"
 else
-	export TF_VAR_slave_flavor_name=$4
+	export TF_VAR_flavor_name=$4
 fi
 export TF_VAR_spark_keypair=$5
 if [[ -f $6 ]] ; then
@@ -42,7 +42,6 @@ case $1 in
 		terraform apply -input=false "terraform.tfstate.d/$2/plan"
 		terraform output -json > outputs.json
 		ansible "master" & 
-		ansible "slaves" &
 		exit 0
 		;;
 	destroy)

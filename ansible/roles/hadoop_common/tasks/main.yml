@@ -48,12 +48,25 @@
   with_fileglob:
           - ../templates/*.j2
 
-- name: Create HDFS namenode systemd service file
+- name: Create systemd service files
+  become: yes
   template:
-          src: systemd/hdfs-namenode.service.j2
-          dest: /etc/systemd/system/hdfs-namenode.service
+          src: "{{ item }}"
+          dest: "/etc/systemd/system/{{ item | basename | regex_replace('.j2','') }}"
+          owner: root
+          group: root
+  with_fileglob:
+          - ../templates/systemd/*.j2 
 
-- name: Create HDFS datanode systemd service file
+- name: Ensure netdata HDFS directory exists
+  file:
+          state: directory
+          path: /etc/netdata/go.d/
+          owner: root
+          group: root
+
+- name: Create netdata HDFS.conf file
   template:
-          src: systemd/hdfs-datanode.service.j2
-          dest: /etc/systemd/system/hdfs-datanode.service
+          src: netdata/hdfs.conf.j2
+          dest: /etc/netdata/go.d/hdfs.conf
+  tags: master
