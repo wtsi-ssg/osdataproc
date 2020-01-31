@@ -69,3 +69,4 @@
   template:
           src: netdata/hdfs.conf.j2
           dest: /etc/netdata/go.d/hdfs.conf
+  tags: master

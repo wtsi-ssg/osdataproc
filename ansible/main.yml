@@ -10,7 +10,7 @@
           - include_role:
                   name: spark_master
 
-- hosts: spark_slaves
+- hosts: spark_slaves,localhost
   become: true
   gather_facts: no
   tasks:

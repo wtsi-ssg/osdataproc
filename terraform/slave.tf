@@ -18,12 +18,9 @@ resource "openstack_compute_instance_v2" "spark_slave" {
   flavor_name     = var.flavor_name
   key_pair        = var.spark_keypair == "None" ? openstack_compute_keypair_v2.spark_keypair[0].id : var.spark_keypair
   security_groups = [openstack_networking_secgroup_v2.spark_slave.id]
+  user_data       = templatefile("user_data.sh.tpl", { spark_master_private_ip = openstack_compute_instance_v2.spark_master.access_ip_v4 })
 
   network {
     name = "cloudforms_network"
-  }
-
-  provisioner "local-exec" {
-    command = "echo '[spark_slaves]\nubuntu@${self.access_ip_v4}' >> terraform.tfstate.d/${var.cluster_name}/hosts_slaves"
   }
 }
