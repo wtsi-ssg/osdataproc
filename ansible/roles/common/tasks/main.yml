@@ -44,12 +44,14 @@
   include_vars:
           file: ../../../terraform/outputs.json
           name: ip_addresses
+  tags: master
 
 - name: Copy hosts file
   become: yes
   template:
           src: hosts.j2
           dest: /etc/hosts
+  tags: master
 
 - name: Create virtualenv
   become: yes
