@@ -1,4 +1,3 @@
-*.tfstate*
 .terraform*
 *.egg-info*
 __pycache__*
