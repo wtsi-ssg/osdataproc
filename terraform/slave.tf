@@ -1,5 +1,5 @@
 resource "openstack_networking_secgroup_v2" "spark_slave" {
-  name = "${var.os_user_name}_${var.cluster_name}_slaves_secgroup"
+  name = "${var.os_user_name}-${var.cluster_name}-slaves-secgroup"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "spark_slave_all" {
@@ -12,7 +12,7 @@ resource "openstack_networking_secgroup_rule_v2" "spark_slave_all" {
 }
 
 resource "openstack_compute_instance_v2" "spark_slave" {
-  name            = format("${var.os_user_name}_${var.cluster_name}_slave_%02d",count.index+1)
+  name            = format("${var.os_user_name}-${var.cluster_name}-slave-%02d",count.index+1)
   count           = var.slaves
   image_name      = var.image_name
   flavor_name     = var.flavor_name

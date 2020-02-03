@@ -1,5 +1,8 @@
 ---
 
+- name: Write IP and hostname to hosts file
+  shell: echo {{ ansible_default_ipv4['address'] }} {{ ansible_hostname }} >> /etc/hosts
+
 - name: Start HDFS datanode
   become: yes
   service: name=hdfs-datanode state=started enabled=yes
