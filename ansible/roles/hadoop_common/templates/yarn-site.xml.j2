@@ -36,7 +36,11 @@
 	  <value>file://{{ yarn_home }}/logs</value>
   </property>
   <property>
+	  <name>yarn.scheduler.maximum-allocation-mb</name>
+	  <value>{{ ( ansible_memtotal_mb - 2048 ) | int() }}</value>
+  </property>
+  <property>
 	  <name>yarn.nodemanager.resource.memory-mb</name>
-	  <value>{{ (ansible_memtotal_mb - 2048) | int() }}</value>
+	  <value>{{ ( ansible_memtotal_mb - 2048 ) | int() }}</value>
   </property>
 </configuration>

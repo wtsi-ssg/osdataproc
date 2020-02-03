@@ -21,6 +21,6 @@ resource "openstack_compute_instance_v2" "spark_slave" {
   user_data       = templatefile("user_data.sh.tpl", { spark_master_private_ip = openstack_compute_instance_v2.spark_master.access_ip_v4 })
 
   network {
-    name = "cloudforms_network"
+    name = var.network_name
   }
 }

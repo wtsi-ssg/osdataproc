@@ -12,15 +12,9 @@ variable "os_password" {
 
 variable "os_auth_url" {
   description = "The endpoint url to connect to OpenStack."
-  default     = "https://eta.internal.sanger.ac.uk:13000/v3"
 }
 
-variable "os_interface" {
-}
-
-variable "masters" {
-  default = 1
-}
+variable "os_interface" {}
 
 variable "slaves" {
   default = 1
@@ -28,13 +22,11 @@ variable "slaves" {
 
 variable "cluster_name" {}
 
-variable "image_name" {
-  default = "bionic-server"
-}
+variable "network_name" {}
 
-variable "flavor_name" {
-  default = "m1.medium"
-}
+variable "image_name" {}
+
+variable "flavor_name" {}
 
 variable "spark_master_public_ip" {
   description = "Floating IP to associate to master node."
@@ -47,5 +39,5 @@ variable "spark_keypair" {
 }
 
 variable "identity_file" {
-  default = "/root/.ssh/id_rsa.pub"
+  default = ""
 }
