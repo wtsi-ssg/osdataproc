@@ -86,12 +86,10 @@ resource "openstack_compute_instance_v2" "spark_master" {
   image_name      = var.image_name
   flavor_name     = var.flavor_name
   key_pair        = var.spark_keypair == "None" ? openstack_compute_keypair_v2.spark_keypair[0].id : var.spark_keypair
-  // TODO create security groups
   security_groups = [openstack_networking_secgroup_v2.spark_master.id]
  
-// TODO create networks
   network {
-    name = "cloudforms_network"
+    name = var.network_name
   }
 
   provisioner "local-exec" {

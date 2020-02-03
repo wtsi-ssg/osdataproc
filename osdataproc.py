@@ -17,6 +17,7 @@ def act(args, command):
         sys.exit("openrc.sh must be sourced")
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = get_args(args, command)
+    print(run_args)
     subprocess.run([f'{osdataproc_home}/run', 'init'])
     subprocess.run(run_args)
 
@@ -38,9 +39,11 @@ def cli():
 
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
     parser_create.add_argument('-n', '--num-slaves', default='2', type=int, help='number of slave nodes')
-    parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
+    parser_create.add_argument('-f', '--flavor', default='m1.medium', help='OpenStack flavor to use')
     group.add_argument('-k', '--keypair', help='OpenStack keypair to use')
-    group.add_argument('-i', '--identity-file', help='path to public key file')
+    group.add_argument('-p', '--public-key', help='path to public key file')
+    parser_create.add_argument('--network-name', default='cloudforms_network', help='OpenStack network to use')
+    parser_create.add_argument('--image-name', default='bionic-server', help='OpenStack image to use - Ubuntu only')
     parser_create.set_defaults(func=create)
 
 
@@ -56,3 +59,6 @@ def cli():
 
     args = parser.parse_args()
     args.func(args)
+
+if __name__ == "__main__":
+    cli()
