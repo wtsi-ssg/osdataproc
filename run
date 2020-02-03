@@ -28,7 +28,7 @@ fi
 
 ansible () {
         export ANSIBLE_HOST_KEY_CHECKING=False
-        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_$1 ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-$1.log 2>&1
+        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_$1 ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_$1 > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-$1.log 2>&1
 }
 
 case $1 in
