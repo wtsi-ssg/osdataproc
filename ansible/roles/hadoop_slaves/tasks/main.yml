@@ -1,7 +1,8 @@
 ---
 
-- name: Write IP and hostname to hosts file
-  shell: echo {{ ansible_default_ipv4['address'] }} {{ ansible_hostname }} >> /etc/hosts
+- name: Write slave IPs and hostnames to /etc/hosts
+  become: yes
+  shell: {{ hadoop_home }}/bin/hdfs dfsadmin -report | grep -A1 Name | awk -F' ' '{print $2}' | cut -d":" -f1 | tr '\n' ' ' | sed 's/192/\'$'\n192/g' >> /etc/hosts
 
 - name: Start HDFS datanode
   become: yes
