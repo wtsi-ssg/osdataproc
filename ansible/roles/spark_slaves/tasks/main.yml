@@ -10,6 +10,10 @@
   register: result
   until: result.rc == 0
 
+- name: Wait 1 minute for all datanodes
+  pause:
+          minutes: 1
+
 - name: Write slave IPs and hostnames to /etc/hosts
   become: yes
   shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep -A1 Name | awk -F' ' '{print $2}' | cut -d\":\" -f1 | tr '\n' ' ' >> /etc/hosts"
