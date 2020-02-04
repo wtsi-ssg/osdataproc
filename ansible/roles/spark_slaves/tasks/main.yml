@@ -2,3 +2,15 @@
 
 - name: Start Spark slave
   service: name=spark-slave state=started enabled=yes
+ 
+- name: Write slave IPs and hostnames to /etc/hosts
+  become: yes
+  shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep -A1 Name | awk -F' ' '{print $2}' | cut -d\":\" -f1 | tr '\n' ' ' >> /etc/hosts"
+
+- name: Split IPs and hostnames on to newlines
+  become: yes
+  replace:
+          path: /etc/hosts
+          regexp: '192'
+          replace: '\n192'
+          backup: yes
