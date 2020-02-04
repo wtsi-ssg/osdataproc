@@ -5,7 +5,7 @@
  
 - name: Wait for datanodes to register
   shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep -A1 Name"
-  retries: 20
+  retries: 50
   delay: 10
   register: result
   until: result.rc == 0
