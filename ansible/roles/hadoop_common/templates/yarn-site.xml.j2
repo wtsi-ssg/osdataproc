@@ -43,4 +43,8 @@
 	  <name>yarn.nodemanager.resource.memory-mb</name>
 	  <value>{{ ( ansible_memtotal_mb - 2048 ) | int() }}</value>
   </property>
+  <property>
+	  <name>yarn.application.classpath</name>
+	  <value>$HADOOP_CLASSPATH:$HADOOP_COMMON_HOME/share/hadoop/tools/lib/*</value>
+  </property>
 </configuration>
