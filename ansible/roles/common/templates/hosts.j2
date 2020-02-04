@@ -2,7 +2,7 @@
 
 {{ spark_master_private_ip }} spark-master
 {% for ip in spark_slave_private_ips %}
-{{ ip }} datanode{{ loop.index }}
+{{ ip }} {{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}
 {% endfor %}
 
 # The following lines are desirable for IPv6 capable hosts
