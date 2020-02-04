@@ -3,9 +3,12 @@
 - name: Start Spark slave
   service: name=spark-slave state=started enabled=yes
  
-- name: Wait for 1 minute for datanodes to regiser
-  pause:
-          minutes: 1
+- name: Wait for datanodes to register
+  shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep -A1 Name"
+  retries: 20
+  delay: 10
+  register: result
+  until: result.rc == 0
 
 - name: Write slave IPs and hostnames to /etc/hosts
   become: yes
