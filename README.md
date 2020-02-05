@@ -1,35 +1,52 @@
 # osdataproc
 
-osdataproc is a command-line tool for creating an OpenStack cluster with [Apache Spark](https://spark.apache.org/) and [Apache Hadoop](https://hadoop.apache.org/) configured. It also comes with [JupyterLab](https://jupyter.org/) installed.
+osdataproc is a command-line tool for creating an OpenStack cluster with [Apache Spark](https://spark.apache.org/) and [Apache Hadoop](https://hadoop.apache.org/) configured. It comes with [JupyterLab](https://jupyter.org/) and [Hail](https://hail.is), a genomic data analysis library built on Spark installed, as well as [Netdata](https://github.com/netdata/netdata) for monitoring.
 
 ### Setup
 
-1. You first need to connect to the spark-runner server at `<username>@172.27.84.230`, signing in with your LDAP (Sanger) password.
-2. Download your OpenStack project openrc.sh file into your $HOME directory on the spark-runner server. You can find the specific file for your project on eta at Project > API Access, and Download OpenStack RC File > OpenStack RC File (Identity API v3) in the top right.
-3. Configure your SSH keys, either by copying pre-existing keys to the server, or creating a new keypair.
-    * Copy your SSH key to the spark-runner server, e.g.: `scp ~/.ssh/id_rsa.pub ~/.ssh/id_rsa <username>@172.27.84.230:.ssh/`. Read the notes below if your private key has a passphrase.
-    
-      **OR:**
-    * Create a new keypair with `ssh-keygen`. The default options are ok. If you choose this option you will only be able to access the created cluster from the spark-runner server, and not your home directory.
-4. `docker run -it -v $HOME:/root -v $HOME/state:/opt/osdataproc/terraform/terraform.tfstate.d andrewmcisaac/osdataproc`
-5. Source your openrc file. For the ssg-isg project, this is `source ssg-isg-openrc.sh`
+1. Create a virtual environment, e.g. `python3 -m venv env`
+2. Source the environment, clone this repository and install requirements into the virtual environment:
+    ```bash
+    source env/bin/activate
+    git clone https://gitlab.internal.sanger.ac.uk/am43/osdataproc.git
+    cd osdataproc/ && pip install -e .
+    ```
+3. Download Terraform and unzip it into a location on your path, e.g. into your venv: 
+    ```bash
+    wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_linux_amd64.zip && unzip terraform_0.12.20_linux_amd64.zip -d env/bin/
+    ```
+3. Download your OpenStack project openrc.sh file into your $HOME directory on the spark-runner server. You can find the specific file for your project at Project > API Access, and then Download OpenStack RC File > OpenStack RC File (Identity API v3) in the top right.
+4. Make sure you have created an SSH keypair with `ssh-keygen` if you have not done so before. The default options are ok. Read the notes below if your private key has a passphrase.
+5. Source your openrc file: `source <project-name>-openrc.sh`
 
 You can then run the `osdataproc` command as shown below. `osdataproc --help`, or `osdataproc create --help` etc. will show possible arguments.
 
 ### Example usage
 
-`osdataproc create --num-slaves 4 --flavor m1.medium -i ~/.ssh/id_rsa.pub  sparkcluster`
+```bash
+osdataproc create [--num-slaves] <number of desired slave nodes> 
+                  [--flavor] <OpenStack flavor to use>
+                  --public-key <path to public key file>
+                  [--network-name] <OpenStack network to use>
+                  [--image-name] <OpenStack image to use - Ubuntu images only>
+                  <cluster-name>
 
-`osdataproc destroy sparkcluster`
+osdataproc destroy <cluster-name>
+```
+`osdataproc create` will output the public ip of your master node when the node has been created. You can connect to this with `ssh ubuntu@<spark_master_public_ip>`. It will take a few minutes for the configuration to complete.
 
-`osdataproc create` will output the public ip (172.x.x.x) of your master node when finished. You can connect to this with `ssh ubuntu@172.x.x.x` from the spark-runner server. It will take a few minutes for the configuration to complete.
+From here you can access Jupyter Lab online at `<spark_master_public_ip>:8888` (the default password is "jupyter"). This can be changed by running `jupyter notebook password` from the master shell and entering your new password, then restarting the server with `sudo service jupyter-lab restart`).
 
-From here you can access Jupyter Lab online at <spark_master_public_ip>:8888 (the default password is "jupyter". This can be changed if you desire by running `jupyter notebook password` and entering your new password, then restarting the server with `sudo systemctl restart jupyter-lab.service`).
-You can view the HDFS webUI at <spark_master_public_ip>:9870, and Spark webUI at <spark_master_public_ip>:8080. You can also view the Spark History Server at <spark_master_public_ip>:18080 to see logs of previously run applications.
+View the Spark webUI at `<spark_master_public_ip>:8080`\
+View the HDFS webUI at `<spark_master_public_ip>:9870`\
+View the YARN webUI at `<spark_master_public_ip>:8088`\
+View the Spark History Server at `<spark_master_public_ip>:18080`\
+View the MapReduce History Server at `<spark_master_public_ip>:19888`\
+View Netdata at `<spark_master_public_ip>:19999`
 
-### Notes
+### Troubleshooting Notes
 
-*  If your private key has a passphrase, Ansible will not be able to connect to the created instances unless you add your key to ssh-agent from within the container. It is recommended to use a passphraseless private key, but to use a passphrase you can type `eval $(ssh-agent)` and `ssh-add`, entering your private key passphrase when prompted. Then go on to create your cluster as above.
-*  Ansible runs in the Docker container, so do not prematurely close the container, or the instances will not be correctly configured - you can detach it with `Ctrl` + `P` + `Q`, and then reattach with `docker attach <container_id>` (container_id is found with `docker container ls`). Re-run your create command to finish an incomplete configuration.
-*  You can view Ansible logs at $HOME/state/\<cluster-name\>/ansible-{master,slaves}.log to see the provisioning state of your instances.
-*  Check [here](https://metrics.internal.sanger.ac.uk/dashboard/db/fce-available-capacity?refresh=5m&orgId=1) for available FCE capacity to make sure there are enough available resources before creating a cluster.
+*  If your private key has a passphrase, Ansible will not be able to connect to the created instances unless you add your key to ssh-agent. To use a passphrase you can type `eval $(ssh-agent)` and `ssh-add`, entering your private key passphrase when prompted. Then go on to create your cluster as above.
+*  You can view Ansible logs at osdataproc/state/\<cluster-name\>/ansible-master.log to see the configuration state of your master.
+*  You can check provisioning status of the slave nodes by copying your SSH keys to the master node and SSH'ing to one of the slave nodes using its private IP (found at `osdataproc/terraform/outputs.json`). The provisioning status is found at `/var/log/user_data.log`.
+*  For Sanger users, check [here](https://metrics.internal.sanger.ac.uk/dashboard/db/fce-available-capacity?refresh=5m&orgId=1) for available FCE capacity before creating a cluster.
