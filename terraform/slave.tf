@@ -16,7 +16,7 @@ resource "openstack_compute_instance_v2" "spark_slave" {
   count           = var.slaves
   image_name      = var.image_name
   flavor_name     = var.flavor_name
-  key_pair        = var.spark_keypair == "None" ? openstack_compute_keypair_v2.spark_keypair[0].id : var.spark_keypair
+  key_pair        = openstack_compute_keypair_v2.spark_keypair[0].id
   security_groups = [openstack_networking_secgroup_v2.spark_slave.id]
   user_data       = templatefile("user_data.sh.tpl", { spark_master_private_ip = openstack_compute_instance_v2.spark_master.access_ip_v4 })
 
