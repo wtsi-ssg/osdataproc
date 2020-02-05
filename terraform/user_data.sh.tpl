@@ -2,7 +2,7 @@
 
 exec >> /var/log/user_data.log 2>&1
 
-REPO=https://gitlab.internal.sanger.ac.uk/am43/osdataproc.git
+REPO=https://github.com/wtsi-ssg/osdataproc.git
 BRANCH=master
 
 echo ${spark_master_private_ip} spark-master >> /etc/hosts
