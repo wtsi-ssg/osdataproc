@@ -5,21 +5,21 @@ osdataproc is a command-line tool for creating an OpenStack cluster with [Apache
 ### Setup
 
 1. Create a virtual environment, e.g. `python3 -m venv env`
-2. Source the environment, clone this repository and install requirements into the virtual environment:
+2. Download Terraform and unzip it into a location on your path, e.g. into your venv: 
+    ```bash
+    wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_linux_amd64.zip && unzip terraform_0.12.20_linux_amd64.zip -d env/bin/
+    ```
+3. Source the environment, clone this repository and install requirements into the virtual environment:
     ```bash
     source env/bin/activate
     git clone https://gitlab.internal.sanger.ac.uk/am43/osdataproc.git
     cd osdataproc/ && pip install -e .
     ```
-3. Download Terraform and unzip it into a location on your path, e.g. into your venv: 
-    ```bash
-    wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_linux_amd64.zip && unzip terraform_0.12.20_linux_amd64.zip -d env/bin/
-    ```
-3. Download your OpenStack project openrc.sh file into your $HOME directory on the spark-runner server. You can find the specific file for your project at Project > API Access, and then Download OpenStack RC File > OpenStack RC File (Identity API v3) in the top right.
 4. Make sure you have created an SSH keypair with `ssh-keygen` if you have not done so before. The default options are ok. Read the notes below if your private key has a passphrase.
-5. Source your openrc file: `source <project-name>-openrc.sh`
+5. Download your OpenStack project openrc.sh file into your $HOME directory on the spark-runner server. You can find the specific file for your project at Project > API Access, and then Download OpenStack RC File > OpenStack RC File (Identity API v3) in the top right.
+6. Source your openrc file: `source <project-name>-openrc.sh`
 
-You can then run the `osdataproc` command as shown below. `osdataproc --help`, or `osdataproc create --help` etc. will show possible arguments.
+You can then run the `osdataproc` command as shown below. `osdataproc --help`, or `osdataproc create --help` etc. will show all possible arguments.
 
 ### Example usage
 
