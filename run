@@ -19,14 +19,13 @@ if [[ $4 == "None" ]] ; then
 else
 	export TF_VAR_flavor_name=$4
 fi
-export TF_VAR_spark_keypair=$5
-if [[ -f $6 ]] ; then
-	export TF_VAR_identity_file=$(< $6)
-elif [[ $6 == "None" ]] ; then
-	echo $6
+if [[ -f $5 ]] ; then
+	export TF_VAR_identity_file=$(< $5)
+elif [[ $5 == "None" ]] ; then
+	echo $5
 fi
-export TF_VAR_network_name=$7
-export TF_VAR_image_name=$8
+export TF_VAR_network_name=$6
+export TF_VAR_image_name=$7
 
 ansible() {
         export ANSIBLE_HOST_KEY_CHECKING=False
@@ -58,17 +57,6 @@ case $1 in
 		fi
 		exit 0
 		;;
-	#update)
-	#	cd ${OSDP_HOME}/terraform
-	#	terraform workspace \select $2 
-	#	echo $3
-	#	#echo "variable "slaves" { default = ${3} } " > override.tf
-	#	cp variables.tf terraform.tfstate.d/$2/
-	#	terraform refresh -var "slaves=$3" terraform.tfstate.d/$2/
-		#terraform apply -input=false "$2-plan"
-	#	rm override.tf
-	#	exit 0
-	#	;;
 	*)
 		exit 0
 		;;

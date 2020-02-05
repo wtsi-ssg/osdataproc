@@ -34,13 +34,10 @@ def cli():
 
     parser_create = subparsers.add_parser('create', help='create a Spark cluster')
 
-    group = parser_create.add_mutually_exclusive_group(required=True)
-
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
     parser_create.add_argument('-n', '--num-slaves', default='2', type=int, help='number of slave nodes')
     parser_create.add_argument('-f', '--flavor', default='m1.medium', help='OpenStack flavor to use')
-    group.add_argument('-k', '--keypair', help='OpenStack keypair to use')
-    group.add_argument('-p', '--public-key', help='path to public key file')
+    parser_create.add_argument('-p', '--public-key', help='path to public key file', required=True)
     parser_create.add_argument('--network-name', default='cloudforms_network', help='OpenStack network to use')
     parser_create.add_argument('--image-name', default='bionic-server', help='OpenStack image to use - Ubuntu only')
     parser_create.set_defaults(func=create)
@@ -49,12 +46,6 @@ def cli():
     parser_destroy = subparsers.add_parser('destroy', help='destroy a Spark cluster')
     parser_destroy.add_argument('cluster-name', help='name of the cluster to destroy')
     parser_destroy.set_defaults(func=destroy)
-
-
-    parser_update = subparsers.add_parser('update', help='resize a Spark cluster')
-    parser_update.add_argument('cluster-name', help='name of the cluster to resize')
-    parser_update.add_argument('-n', '--num-slaves', type=int, help='number of slave nodes')
-    parser_update.set_defaults(func=update)
 
     args = parser.parse_args()
     args.func(args)
