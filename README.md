@@ -35,6 +35,8 @@ osdataproc destroy <cluster-name>
 ```
 `osdataproc create` will output the public ip of your master node when the node has been created. You can connect to this with `ssh ubuntu@<spark_master_public_ip>`. It will take a few minutes for the configuration to complete.
 
+You can configure defaults for the optional arguments in the `terraform/variables.tf` file.
+
 From here you can access Jupyter Lab online at `<spark_master_public_ip>:8888` (the default password is "jupyter"). This can be changed by running `jupyter notebook password` from the master shell and entering your new password, then restarting the server with `sudo service jupyter-lab restart`).
 
 View the Spark webUI at `<spark_master_public_ip>:8080`\
@@ -48,5 +50,5 @@ View Netdata at `<spark_master_public_ip>:19999`
 
 *  If your private key has a passphrase, Ansible will not be able to connect to the created instances unless you add your key to ssh-agent. To use a passphrase you can type `eval $(ssh-agent)` and `ssh-add`, entering your private key passphrase when prompted. Then go on to create your cluster as above.
 *  You can view Ansible logs at osdataproc/state/\<cluster-name\>/ansible-master.log to see the configuration state of your master.
-*  You can check provisioning status of the slave nodes by copying your SSH keys to the master node and SSH'ing to one of the slave nodes using its private IP (found at `osdataproc/terraform/outputs.json`). The provisioning status is found at `/var/log/user_data.log`.
+*  You can check provisioning status of the slave nodes by copying your SSH keys to the master node and SSH'ing to one of the slave nodes using its private IP (found at `terraform/outputs.json`). The provisioning status is found at `/var/log/user_data.log` on each slave node.
 *  For Sanger users, check [here](https://metrics.internal.sanger.ac.uk/dashboard/db/fce-available-capacity?refresh=5m&orgId=1) for available FCE capacity before creating a cluster.
