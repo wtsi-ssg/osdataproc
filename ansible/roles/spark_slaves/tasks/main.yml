@@ -22,6 +22,6 @@
   become: yes
   replace:
           path: /etc/hosts
-          regexp: '192'
-          replace: '\n192'
+          regexp: '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+          replace: '\n\1'
           backup: yes
