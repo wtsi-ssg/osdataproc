@@ -42,3 +42,5 @@ variable "spark_master_public_ip" {
 variable "identity_file" {
   default = ""
 }
+
+variable "netdata_api_key" {}

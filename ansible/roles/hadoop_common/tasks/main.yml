@@ -70,3 +70,9 @@
           src: netdata/hdfs.conf.j2
           dest: /etc/netdata/go.d/hdfs.conf
   tags: master
+
+- name: Create netdata stream.conf file
+  template:
+          src: netdata/stream.conf
+          dest: /etc/netdata/stream.conf
+
