@@ -58,7 +58,9 @@
     #CAfile = /etc/ssl/certs/cert.pem
 
     # The API_KEY to use (as the sender)
+    {% if netdata_api_key is defined %}
     api key = {{ netdata_api_key }}
+    {% endif %}
 
     # The timeout to connect and send metrics
     timeout seconds = 60
@@ -106,7 +108,11 @@
 # If the key is not listed here, it will not be able to push metrics.
 
 # [API_KEY] is [YOUR-API-KEY], i.e [11111111-2222-3333-4444-555555555555]
-[{{ netdata_api_key }}]
+{% if lookup('env', 'NETDATA_API_KEY') %}
+[{{ lookup('env', 'NETDATA_API_KEY') }}]
+{% else %}
+[]
+{% endif %}
     # Default settings for this API key
 
     # You can disable the API key, by setting this to: no

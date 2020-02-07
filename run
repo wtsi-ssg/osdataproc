@@ -28,12 +28,12 @@ export TF_VAR_network_name=$6
 export TF_VAR_image_name=$7
 
 # generate API key for netdata
-NETDATA_API_KEY=$(uuidgen)
-export TF_VAR_netdata_api_key=NETDATA_API_KEY
+export NETDATA_API_KEY=$(uuidgen)
+export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
 ansible() {
         export ANSIBLE_HOST_KEY_CHECKING=False
-        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_$1 ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e 'netdata_api_key=${NETDATA_API_KEY}'  --limit spark_$1 > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-$1.log 2>&1
+        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_$1 ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_$1 > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-$1.log 2>&1
 }
 
 case $1 in
