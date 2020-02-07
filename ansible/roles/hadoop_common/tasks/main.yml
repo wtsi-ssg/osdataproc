@@ -73,6 +73,6 @@
 
 - name: Create netdata stream.conf file
   template:
-          src: netdata/stream.conf
+          src: netdata/stream.conf.j2
           dest: /etc/netdata/stream.conf
 
