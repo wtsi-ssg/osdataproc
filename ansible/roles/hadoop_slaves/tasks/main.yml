@@ -7,3 +7,12 @@
 - name: Start Yarn node manager
   become: yes
   service: name=yarn-nm state=started enabled=yes
+
+- name: Mount master data directory
+  become: yes
+  mount:
+          path: "/home/ubuntu/data"
+          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
+          fstype: nfs
+          state: mounted
+

@@ -27,6 +27,20 @@
           name: scala
           state: latest
 
+- name: Install nfs packages
+  become: yes
+  apt:
+          pkg:
+                - nfs-kernel-server
+                - nfs-common
+
+- name: Create nfs shared data directory
+  file:
+          state: directory
+          path: "{{ home }}/data"
+          owner: "{{ user }}"
+          group: "{{ group }}"
+
 - name: Install Netdata packages
   become: yes
   apt:
