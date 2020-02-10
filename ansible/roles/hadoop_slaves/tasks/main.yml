@@ -8,11 +8,16 @@
   become: yes
   service: name=yarn-nm state=started enabled=yes
 
-- name: Mount master data directory
-  become: yes
-  mount:
-          path: "/home/ubuntu/data"
-          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
-          fstype: nfs
-          state: mounted
+  #- name: Mount master data directory
+  #  become: yes
+  #  mount:
+  #          path: "/home/ubuntu/data"
+  #          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
+  #          fstype: nfs
+  #          opts: noac
+  #          state: mounted
 
+- name: Include info in fstab
+  lineinfile:
+          path: /etc/fstab
+          line: "{{ spark_master_private_ip }}:/home/ubuntu/data /home/ubuntu/data nfs noac 0 0"
