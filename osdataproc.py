@@ -40,6 +40,7 @@ def cli():
     parser_create.add_argument('-p', '--public-key', help='path to public key file', required=True)
     parser_create.add_argument('--network-name', default='cloudforms_network', help='OpenStack network to use')
     parser_create.add_argument('--image-name', default='bionic-server', help='OpenStack image to use - Ubuntu only')
+    parser_create.add_argument('-v', '--nfs-volume', help='ID of an nfs volume to attach to the cluster')
     parser_create.set_defaults(func=create)
 
 

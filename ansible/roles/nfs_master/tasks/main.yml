@@ -1,0 +1,52 @@
+---
+
+- name: Install pip
+  become: yes
+  apt:
+          name: python3-pip
+  when: nfs_volume_id != ''
+
+- name: Install python3-openstacksdk
+  become: yes
+  pip:
+          name: openstacksdk
+          executable: /usr/bin/pip3
+  when: nfs_volume_id != ''
+
+- name: Make nfs shared data directory
+  file:
+          state: directory
+          path: /home/ubuntu/data
+          owner: ubuntu
+          group: ubuntu
+  when: nfs_volume_id != ''
+
+- name: Attach an OpenStack volume to the master instance
+  os_server_volume:
+          state: present
+          server: "{{ ansible_hostname }}"
+          volume: "{{ nfs_volume_id }}"
+          device: /dev/vdb1
+          auth:
+                  auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
+                  username: "{{ lookup('env', 'OS_USERNAME') }}"
+                  password: "{{ lookup('env', 'OS_PASSWORD') }}"
+                  project_name: "{{ lookup ('env', 'OS_PROJECT_NAME') }}"
+                  os_user_domain_name: "{{ lookup ('env', 'OS_USER_DOMAIN_NAME') }}"
+                  os_project_domain_name: "{{ lookup ('env', 'OS_PROJECT_DOMAIN_ID') }}"
+  when: nfs_volume_id != ''
+
+- name: Mount volume to /home/ubuntu/data directory
+  become: yes
+  mount:
+          path: /home/ubuntu/data
+          src: /dev/vdb1
+          fstype: ext4
+          state: mounted
+  when: nfs_volume_id != ''
+
+- name: Restart nfs-kernel-server
+  service:
+          name: nfs-kernel-server
+          state: restarted
+          enabled: yes

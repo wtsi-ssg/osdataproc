@@ -1,7 +1,20 @@
 #!/bin/bash
+set -e
 
 OSDP=$(readlink -f "$0")
 OSDP_HOME=$(dirname "$OSDP")
+
+# Run on apply error - delete created resources
+cleanup () {
+	echo "ERROR: Only partial configuration could complete. Cleaning up created resources..."
+	sleep 3
+	cd ${OSDP_HOME}/terraform
+	terraform workspace \select $TF_VAR_cluster_name && \
+	terraform destroy -auto-approve && \
+	terraform workspace \select default && \
+	terraform workspace delete $TF_VAR_cluster_name
+	echo "Tidy up complete. Please try again. Check that enough resources exist."
+}
 
 export TF_VAR_os_user_name=$OS_USERNAME
 export TF_VAR_os_tenant_name=$OS_PROJECT_NAME
@@ -26,6 +39,12 @@ elif [[ $5 == "None" ]] ; then
 fi
 export TF_VAR_network_name=$6
 export TF_VAR_image_name=$7
+if [[ $8 == "None" ]] ; then
+	echo "No volume to attach"
+	export NFS_VOLUME_ID=''
+else
+	export NFS_VOLUME_ID=$8
+fi
 
 # generate API key for netdata
 export NETDATA_API_KEY=$(uuidgen)
@@ -41,9 +60,10 @@ case $1 in
 		cd ${OSDP_HOME}/terraform && terraform init -input=false
 		;;
 	apply)
+		trap cleanup ERR
 		cd ${OSDP_HOME}/terraform
 	       	terraform workspace \select $2 || terraform workspace new $2
-	        terraform plan -out="terraform.tfstate.d/$2/plan" -input=false
+		terraform plan -out="terraform.tfstate.d/$2/plan" -input=false
 		terraform apply -input=false "terraform.tfstate.d/$2/plan"
 		terraform output -json > outputs.json
 		ansible "master" & 
