@@ -45,6 +45,7 @@ if [[ $8 == "None" ]] ; then
 else
 	export NFS_VOLUME_ID=$8
 fi
+export TF_VAR_nfs_volume_id=${NFS_VOLUME_ID}
 
 # generate API key for netdata
 export NETDATA_API_KEY=$(uuidgen)

@@ -1,3 +1,4 @@
 ---
 dependencies:
         - role: nfs_slaves
+          when: nfs_volume_id != ''

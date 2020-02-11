@@ -44,3 +44,5 @@ variable "identity_file" {
 }
 
 variable "netdata_api_key" {}
+
+variable "nfs_volume_id" {}

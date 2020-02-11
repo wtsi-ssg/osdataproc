@@ -20,7 +20,8 @@ resource "openstack_compute_instance_v2" "spark_slave" {
   security_groups = [openstack_networking_secgroup_v2.spark_slave.id]
   user_data       = templatefile("user_data.sh.tpl", 
                       {spark_master_private_ip = openstack_compute_instance_v2.spark_master.access_ip_v4,
-                       netdata_api_key = var.netdata_api_key})
+                       netdata_api_key         = var.netdata_api_key,
+                       nfs_volume_id           = var.nfs_volume_id})
 
   network {
     name = var.network_name
