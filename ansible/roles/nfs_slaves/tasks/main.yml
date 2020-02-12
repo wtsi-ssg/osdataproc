@@ -1,13 +1,10 @@
 ---
 
-- name: Create mount point
-  become: yes
-  lineinfile:
-          dest: /etc/fstab
-          state: present
-          insertafter: EOF
-          line: "{{ spark_master_private_ip }}:/home/ubuntu/data /home/ubuntu/data nfs defaults 0 0"
-
 - name: Mount data directory
   become: yes
-  shell: mount -a
+  mount:
+          path: /home/ubuntu/data
+          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
+          fstype: nfs
+          state: mounted
+  ignore_errors: yes

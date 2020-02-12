@@ -39,6 +39,7 @@
           src: /dev/vdb1
           fstype: ext4
           state: mounted
+  ignore_errors: yes
 
 - name: Add data directory to /etc/exports
   become: yes
