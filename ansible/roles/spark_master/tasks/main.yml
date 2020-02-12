@@ -31,7 +31,7 @@
 - name: Symlink Jupyter directory in data directory
   file:
           state: link
-          src: "{{ home }}/data"
+          src: "{{ home }}/data/jupyter"
           dest: "{{ home }}/jupyter"
           owner: "{{ spark_user }}"
           group: "{{ spark_group }}"
