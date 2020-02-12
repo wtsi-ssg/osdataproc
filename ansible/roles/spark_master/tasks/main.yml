@@ -28,6 +28,14 @@
   loop_control:
           loop_var: dir
 
+- name: Symlink Jupyter directory in data directory
+  file:
+          state: link
+          src: "{{ home }}/data"
+          dest: "{{ home }}/jupyter"
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+
 - name: Generate Jupyter password
   shell: "{{ venv_dir }}/bin/python -c \"from notebook.auth import passwd ; print(passwd('{{ password }}'))\""
   register: jupyter_notebookapp_password
