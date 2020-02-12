@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-
 OSDP=$(readlink -f "$0")
 OSDP_HOME=$(dirname "$OSDP")
 
@@ -16,6 +15,7 @@ cleanup () {
 	echo "Tidy up complete. Please try again. Check that enough resources exist."
 }
 
+export TF_IN_AUTOMATION=1 # Limit Terraform output
 export TF_VAR_os_user_name=$OS_USERNAME
 export TF_VAR_os_tenant_name=$OS_PROJECT_NAME
 export TF_VAR_os_password=$OS_PASSWORD
@@ -23,27 +23,27 @@ export TF_VAR_os_auth_url=$OS_AUTH_URL
 export TF_VAR_os_region_name=$OS_REGION_NAME
 export TF_VAR_os_interface=$OS_INTERFACE
 
-export TF_VAR_cluster_name=$2
-if [[ $3 =~ ^[0-9]+$ ]] ; then
-	export TF_VAR_slaves=$(($3))
+export TF_VAR_cluster_name=${2}
+if [[ ${3} =~ ^[0-9]+$ ]] ; then
+	export TF_VAR_slaves=$((${3}))
 fi
-if [[ $4 == "None" ]] ; then
+if [[ ${4} == "None" ]] ; then
 	echo "Default flavor chosen"
 else
-	export TF_VAR_flavor_name=$4
+	export TF_VAR_flavor_name=${4}
 fi
-if [[ -f $5 ]] ; then
-	export TF_VAR_identity_file=$(< $5)
-elif [[ $5 == "None" ]] ; then
-	echo $5
+if [[ -f ${5} ]] ; then
+	export TF_VAR_identity_file=$(< ${5})
+elif [[ ${5} == "None" ]] ; then
+	echo ${5}
 fi
-export TF_VAR_network_name=$6
-export TF_VAR_image_name=$7
-if [[ $8 == "None" ]] ; then
+export TF_VAR_network_name=${6}
+export TF_VAR_image_name=${7}
+if [[ ${8} == "None" ]] ; then
 	echo "No volume to attach"
 	export NFS_VOLUME_ID=''
 else
-	export NFS_VOLUME_ID=$8
+	export NFS_VOLUME_ID=${8}
 fi
 export TF_VAR_nfs_volume_id=${NFS_VOLUME_ID}
 
@@ -53,32 +53,54 @@ export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
 ansible() {
         export ANSIBLE_HOST_KEY_CHECKING=False
-        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_$1 ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_$1 > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-$1.log 2>&1
+        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_${1} > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
 }
 
-case $1 in
+case ${1} in
 	init)
 		cd ${OSDP_HOME}/terraform && terraform init -input=false
 		;;
 	apply)
 		trap cleanup ERR
 		cd ${OSDP_HOME}/terraform
-	       	terraform workspace \select $2 || terraform workspace new $2
-		terraform plan -out="terraform.tfstate.d/$2/plan" -input=false
-		terraform apply -input=false "terraform.tfstate.d/$2/plan"
-		terraform output -json > outputs.json
+	       	terraform workspace \select ${2} || terraform workspace new ${2}
+		terraform plan -out="terraform.tfstate.d/${2}/plan" -input=false
+		terraform apply -input=false "terraform.tfstate.d/${2}/plan"
+		terraform output -json > terraform.tfstate.d/${2}/outputs.json
+		echo "Running provisioning software. This will take a few minutes."
+	       	echo "Check logs at state/${2}/ansible-master.log"
 		ansible "master" & 
 		exit 0
 		;;
 	destroy)
 		cd ${OSDP_HOME}/terraform
-	        if ! terraform workspace \select $2 ; then
-			echo "cluster not found"
+	        if ! terraform workspace \select ${2} ; then
+			echo "Cluster not found"
 		else
-			terraform workspace \select $2 && \
+			terraform workspace \select ${2} && \
 			terraform destroy && \
 			terraform workspace \select default && \
-			terraform workspace delete $2
+			terraform workspace delete ${2}
+		fi
+		exit 0
+		;;
+	reboot)
+		nodes=${OS_USERNAME}-${2}-slave
+		cd ${OSDP_HOME}/terraform
+		if ! terraform workspace \select ${2} ; then
+			echo "Cluster not found"
+		else
+			echo "Nodes to reboot: " && \
+				nova list | grep ${nodes} | cut -d '|' -f 3
+			read -p "Are you sure you want to reboot all ${nodes} nodes? (y/n) " -n 1 -r
+			echo
+			if [[ $REPLY =~ ^[Yy]$ ]] ; then
+				echo "Rebooting slave nodes..."
+				nova list | grep ${nodes} | cut -d '|' -f 2 | xargs nova reboot
+			else
+				echo "Reboot cancelled"
+			fi
+
 		fi
 		exit 0
 		;;

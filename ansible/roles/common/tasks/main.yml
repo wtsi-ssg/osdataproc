@@ -70,7 +70,7 @@
 
 - name: Include IP addresses
   include_vars:
-          file: ../../../terraform/outputs.json
+          file: "../../../terraform/terraform.tfstate.d/{{ lookup('env', 'TF_VAR_cluster_name') }}/outputs.json"
           name: ip_addresses
   tags: master
 

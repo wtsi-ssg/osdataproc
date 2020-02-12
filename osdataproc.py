@@ -12,6 +12,9 @@ def destroy(args):
 def update(args):
     act(args, 'update')
 
+def reboot(args):
+    act(args, 'reboot')
+
 def act(args, command):
     if "OS_USERNAME" not in os.environ:
         sys.exit("openrc.sh must be sourced")
@@ -29,7 +32,7 @@ def get_args(args, command):
 
 def cli():
     '''osdataproc'''
-    parser = argparse.ArgumentParser(description='CLI tool to manage a Spark cluster')
+    parser = argparse.ArgumentParser(description='CLI tool to manage a Spark and Hadoop cluster')
     subparsers = parser.add_subparsers()
 
     parser_create = subparsers.add_parser('create', help='create a Spark cluster')
@@ -47,6 +50,10 @@ def cli():
     parser_destroy = subparsers.add_parser('destroy', help='destroy a Spark cluster')
     parser_destroy.add_argument('cluster-name', help='name of the cluster to destroy')
     parser_destroy.set_defaults(func=destroy)
+
+    parser_reboot = subparsers.add_parser('reboot', help='reboot all slave nodes of a cluster, e.g. to pick up mount point changes')
+    parser_reboot.add_argument('cluster-name', help='name of the cluster to reboot')
+    parser_reboot.set_defaults(func=reboot)
 
     args = parser.parse_args()
     args.func(args)
