@@ -1,3 +1,6 @@
 ---
+spark_master_public_ip: "{{ ip_addresses | json_query('spark_master_public_ip.value') | join('') }}"
+
 spark_master_private_ip: "{{ ip_addresses | json_query('spark_master_private_ip.value') | join('') }}"
+
 spark_slave_private_ips: "{{ ip_addresses | json_query('spark_slave_private_ips.value') }}"

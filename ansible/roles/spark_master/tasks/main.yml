@@ -57,5 +57,16 @@
 - name: Start Jupyter Lab
   service: name=jupyter-lab state=started enabled=yes
 
+- name: Create nginx conf file
+  become: yes
+  template:
+          src: nginx.conf.j2
+          dest: /etc/nginx/conf.d/nginx.conf
+          owner: root
+          group: root
+
+- name: Restart nginx
+  service: name=nginx state=restarted enabled=yes
+
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"

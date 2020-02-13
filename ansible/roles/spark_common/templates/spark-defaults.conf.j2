@@ -13,3 +13,7 @@ spark.jars                       {{ hail_home }}/lib/python3.6/site-packages/hai
 spark.history.fs.logDirectory    hdfs:///shared/spark-logs
 spark.eventLog.enabled           true
 spark.eventLog.dir               hdfs:///shared/spark-logs
+
+spark.ui.reverseProxy            true
+spark.ui.reverseProxyUrl         http://192.168.252.38/spark
+spark.ui.proxyBase               /spark

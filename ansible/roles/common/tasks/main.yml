@@ -34,6 +34,12 @@
                 - nfs-kernel-server
                 - nfs-common
 
+- name: Install nginx
+  become: yes
+  apt:
+          name: nginx
+          state: latest
+
 - name: Create nfs shared data directory
   file:
           state: directory
