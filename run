@@ -68,7 +68,7 @@ case ${1} in
 		terraform apply -input=false "terraform.tfstate.d/${2}/plan"
 		terraform output -json > terraform.tfstate.d/${2}/outputs.json
 		echo "Running provisioning software. This will take a few minutes."
-	       	echo "Check logs at state/${2}/ansible-master.log"
+	       	echo "Check logs at osdataproc/state/${2}/ansible-master.log"
 		ansible "master" & 
 		exit 0
 		;;
