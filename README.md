@@ -12,7 +12,7 @@ osdataproc is a command-line tool for creating an OpenStack cluster with [Apache
 3. Source the environment, clone this repository and install requirements into the virtual environment:
     ```bash
     source env/bin/activate
-    git clone https://gitlab.internal.sanger.ac.uk/am43/osdataproc.git
+    git clone https://github.com/wtsi-ssg/osdataproc.git
     cd osdataproc/ && pip install -e .
     ```
 4. Make sure you have created an SSH keypair with `ssh-keygen` if you have not done so before. The default options are ok. Read the notes below if your private key has a passphrase.
