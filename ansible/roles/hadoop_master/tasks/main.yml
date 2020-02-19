@@ -4,11 +4,9 @@
   become: yes
   become_user: "{{ hadoop_user }}"
   command: "{{ hadoop_home }}/bin/hdfs namenode -format -nonInteractive"
-  run_once: yes
   environment:
           JAVA_HOME: "{{ java_home }}"
-  tags:
-          - format
+  ignore_errors: yes
 
 - name: Start HDFS namenode
   become: yes
