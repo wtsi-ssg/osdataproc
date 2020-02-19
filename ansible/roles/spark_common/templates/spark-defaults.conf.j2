@@ -4,7 +4,7 @@ spark.driver.memory              {{ ( 0.8 * ansible_memtotal_mb ) | int() }}m
 spark.executor.memory            {{ ( 0.8 * ansible_memtotal_mb ) | int() }}m
 spark.executor.instances         1
 
-spark.driver.extraClassPath      {{ hail_home }}/hail-all-spark.jar
+spark.driver.extraClassPath      {{ hail_home }}/lib/python3.6/site-packages/hail-all-spark.jar
 spark.executor.extraClassPath    ./hail-all-spark.jar
 spark.serializer                 org.apache.spark.serializer.KryoSerializer
 spark.kryo.registrator           is.hail.kryo.HailKryoRegistrator
