@@ -8,7 +8,6 @@
           owner: "{{ hadoop_user }}"
           group: "{{ hadoop_group }}"
   with_items:
-          - "{{ hadoop_download_dir }}"
           - "{{ hadoop_install_dir }}"
           - "{{ hadoop_logs_dir }}"
           - "{{ hdfs_home }}"
@@ -17,21 +16,15 @@
           - "{{ yarn_home }}"
           - "{{ yarn_logs_dir }}"
 
-- name: Download Hadoop distribution
-  get_url:
-          url: "{{ hadoop_mirror }}/hadoop-{{hadoop_version }}/hadoop-{{hadoop_version}}.tar.gz"
-          dest: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
-          owner: "{{ hadoop_user }}"
-          group: "{{ hadoop_group }}"
-
-- name: Extract Hadoop distribution
+- name: Download and extract Hadoop distribution
+  become: yes
   unarchive:
-          src: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
+          src: "{{ hadoop_mirror }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
           dest: "{{ hadoop_install_dir }}"
-          copy: no
           owner: "{{ hadoop_user }}"
           group: "{{ hadoop_group }}"
           extra_opts: [--strip-components=1]
+          remote_src: yes
 
 - name: Copy Hadoop configuration files
   become: yes
