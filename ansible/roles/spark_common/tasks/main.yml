@@ -18,11 +18,10 @@
   with_items:
           - "{{ spark_install_dir }}"
 
-- name: Extract Spark distribution
+- name: Download and extract Spark distribution
   unarchive:
           src: "{{ spark_mirror }}/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
           dest: "{{ spark_install_dir }}"
-          copy: no
           owner: "{{ spark_user }}"
           group: "{{ spark_group }}"
           extra_opts: [--strip-components=1]
