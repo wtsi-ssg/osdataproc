@@ -14,17 +14,31 @@
   pause:
           minutes: 1
 
-- name: Write slave IPs and hostnames to /etc/hosts
-  become: yes
-  shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep -A1 Name | awk -F' ' '{print $2}' | cut -d\":\" -f1 | tr '\n' ' ' >> /etc/hosts"
+- name: Register slave IP addresses
+  shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep Name | awk -F' ' '{print $2}' | cut -d\":\" -f1"
+  register: ips
 
-- name: Split IPs and hostnames on to newlines
-  become: yes
-  replace:
+- name: Register slave hostnames
+  shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep Hostname | awk -F' ' '{print $2}'"
+  register: hostnames
+
+- name: Write slave IPs and hostnames to /etc/hosts
+  lineinfile:
           path: /etc/hosts
-          regexp: '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
-          replace: '\n\1'
-          backup: yes
+          line: "{{ item.0 }} {{ item.1 }}"
+  loop: "{{ ips.stdout_lines|zip(hostnames.stdout_lines)|list }}"
+
+          #- name: Write slave IPs and hostnames to /etc/hosts
+          #  become: yes
+          #  shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -report | grep -A1 Name | awk -F' ' '{print $2}' | cut -d\":\" -f1 | tr '\n' ' ' >> /etc/hosts"
+          #
+          #- name: Split IPs and hostnames on to newlines
+          #  become: yes
+          #  replace:
+          #          path: /etc/hosts
+          #          regexp: '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+          #          replace: '\n\1'
+          #          backup: yes
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"
