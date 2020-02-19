@@ -1,13 +1,30 @@
 resource "openstack_networking_secgroup_v2" "spark_slave" {
-  name = "${var.os_user_name}-${var.cluster_name}-slaves-secgroup"
+  name = "${var.os_user_name}-${var.cluster_name}-slave-secgroup"
 }
 
-resource "openstack_networking_secgroup_rule_v2" "spark_slave_all" {
+resource "openstack_networking_secgroup_rule_v2" "spark_slave_http_in" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to http server"
+  protocol          = "tcp"
+  port_range_min    = 80
+  port_range_max    = 80
+  security_group_id = openstack_networking_secgroup_v2.spark_slave.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_slave_master_in" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
-  port_range_min    = 1
-  port_range_max    = 65535
+  remote_group_id   = openstack_networking_secgroup_v2.spark_master.id
+  security_group_id = openstack_networking_secgroup_v2.spark_slave.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_slave_slave_in" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  remote_group_id   = openstack_networking_secgroup_v2.spark_slave.id
   security_group_id = openstack_networking_secgroup_v2.spark_slave.id
 }
 

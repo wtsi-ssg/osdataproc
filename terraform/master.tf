@@ -17,69 +17,79 @@ resource "openstack_networking_secgroup_rule_v2" "spark_master_main_in" {
   ethertype         = "IPv4"
   description       = "Allows inbound connections to Spark master"
   protocol          = "tcp"
-  port_range_min    = 1
-  port_range_max    = 65535
+  port_range_min    = 7077
+  port_range_max    = 7077
   security_group_id = openstack_networking_secgroup_v2.spark_master.id
 }
 
-//resource "openstack_networking_secgroup_rule_v2" "spark_master_web_ui" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections to Spark Master web UI"
-//  protocol          = "tcp"
-//  port_range_min    = 8080
-//  port_range_max    = 8080
-//  security_group_id = openstack_networking_secgroup_v2.spark_master.id
-//}
-//
-//resource "openstack_networking_secgroup_rule_v2" "spark_master_jupyter" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections to Jupyter Notebook"
-//  protocol          = "tcp"
-//  port_range_min    = 8888
-//  port_range_max    = 8888
-//  security_group_id = openstack_networking_secgroup_v2.spark_master.id
-//}
-//
-//resource "openstack_networking_secgroup_rule_v2" "spark_master_yarn" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections to Yarn web UI"
-//  protocol          = "tcp"
-//  port_range_min    = 8088
-//  port_range_max    = 8088
-//  security_group_id = openstack_networking_secgroup_v2.spark_master.id
-//}
-//
-//resource "openstack_networking_secgroup_rule_v2" "spark_master_hdfs" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections to HDFS web UI"
-//  protocol          = "tcp"
-//  port_range_min    = 9820
-//  port_range_max    = 9870
-//  security_group_id = openstack_networking_secgroup_v2.spark_master.id
-//}
-//
-//resource "openstack_networking_secgroup_rule_v2" "spark_master_http_in" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections to http server"
-//  protocol          = "tcp"
-//  port_range_min    = 80
-//  port_range_max    = 80
-//  security_group_id = openstack_networking_secgroup_v2.spark_master.id
-//}
-//
-//resource "openstack_networking_secgroup_rule_v2" "spark_master_slave_in" {
-//  direction         = "ingress"
-//  ethertype         = "IPv4"
-//  description       = "Allows inbound connections from any slave node"
-//  protocol          = "tcp"
-//  remote_group_id   = openstack_networking_secgroup_v2.spark_slave.id
-//  security_group_id = openstack_networking_secgroup_v2.spark_master.id
-//}
+resource "openstack_networking_secgroup_rule_v2" "spark_master_yarn" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to Yarn web UI"
+  protocol          = "tcp"
+  port_range_min    = 8088
+  port_range_max    = 8088
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_master_hdfs" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to HDFS"
+  protocol          = "tcp"
+  port_range_min    = 9820
+  port_range_max    = 9820
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_master_hdfs_web" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to HDFS web UI"
+  protocol          = "tcp"
+  port_range_min    = 9870
+  port_range_max    = 9870
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_master_mapr_history" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to MapReduce History web UI"
+  protocol          = "tcp"
+  port_range_min    = 19888
+  port_range_max    = 19888
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_master_spark_history" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to Spark History web UI"
+  protocol          = "tcp"
+  port_range_min    = 18080
+  port_range_max    = 18080
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_master_http_in" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to http server"
+  protocol          = "tcp"
+  port_range_min    = 80
+  port_range_max    = 80
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "spark_master_slave_in" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections from any slave node"
+  protocol          = "tcp"
+  remote_group_id   = openstack_networking_secgroup_v2.spark_slave.id
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
 
 resource "openstack_compute_instance_v2" "spark_master" {
   name            = "${var.os_user_name}-${var.cluster_name}-master"
