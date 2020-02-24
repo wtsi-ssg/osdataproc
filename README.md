@@ -62,6 +62,10 @@ You must then restart the nfs-kernel-server service to pick up these changes (`s
 *  osdataproc is configured to use Kryo serialization for use with Hail and up to 10x faster data serialization, although not all Serializable types are supported, and so it may be necessary to change `$SPARK_HOME/conf/spark-defaults.conf` by commenting out or removing the `spark.serializer` configuration option.
 *  For Sanger users, check [here](https://metrics.internal.sanger.ac.uk/dashboard/db/fce-available-capacity?refresh=5m&orgId=1) for available FCE capacity before creating a cluster.
 
+### Contributing and Editing
+
+You can contribute by submitting pull requests to this repository. If you create a fork you will need to update the `REPO` and `BRANCH` variables in `terraform/user_data.sh.tpl` to the new repository location for the changes you make to be reflected in the created cluster.
+
 #### TODO
 
 *  Resize functionality (larger flavor/more nodes)
