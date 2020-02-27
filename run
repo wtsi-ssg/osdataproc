@@ -52,6 +52,7 @@ export TF_VAR_nfs_volume_id=${NFS_VOLUME_ID}
 export NETDATA_API_KEY=$(uuidgen)
 export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
+
 ansible() {
         export ANSIBLE_HOST_KEY_CHECKING=False
         ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_${1} > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
@@ -64,6 +65,9 @@ case ${1} in
 		;;
 	apply)
 		trap cleanup ERR
+		echo "Password for web authentication: "
+		read -sr PASSWORD
+		export PASSWORD=$PASSWORD
 	       	terraform workspace \select ${2} || terraform workspace new ${2}
 		terraform plan -out="terraform.tfstate.d/${2}/plan" -input=false
 		terraform apply -input=false "terraform.tfstate.d/${2}/plan"

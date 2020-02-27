@@ -3,6 +3,9 @@ server {
   server_name {{ spark_master_public_ip }} spark-master ;  
   client_max_body_size 0;
 
+  auth_basic           "Enter your OpenStack username and configured password";
+  auth_basic_user_file /etc/nginx/passwdfile;
+
   location /jupyter {
       proxy_pass http://localhost:8888;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -14,6 +17,10 @@ server {
       proxy_set_header Upgrade "websocket";
       proxy_set_header Connection "upgrade";
       proxy_read_timeout 86400;
+  }
+
+  location / {
+      rewrite ^/$ /jupyter/ redirect;
   }
 
   location = /netdata {
@@ -52,18 +59,240 @@ server {
       sub_filter       'href="app'  'href="/spark/app/';
   }
 
-  location /history/ {
-      proxy_pass http://localhost:18080/;
+  location ~ ^/history/(.*)?$ {
+      rewrite ^/history(.*)$ $1 break;
+      proxy_pass http://{{ spark_master_private_ip }}:18080$uri$is_args$args;
       proxy_set_header Accept-Encoding "";
-      proxy_pass_request_headers on;
-      proxy_set_header Connection "keep-alive";
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
-      sub_filter "/spark/" "/history/";
+      sub_filter_types "*";
+      sub_filter_once off;
+      sub_filter       'src="/'        'src="/history/';
+      sub_filter       'href="/'       'href="/history/';
+  }
+
+  location ~ ^/api/(.*)$ {
+      rewrite ^/history/api(.*)$ $1 break;
+      proxy_pass http://{{ spark_master_private_ip }}:18080;
+  }
+
+  location ~ ^/static/(.*)$ {
+      rewrite ^/history/static(.*)$ $1 break;
+      proxy_pass http://{{ spark_master_private_ip }}:18080;
+  }
+
+  # Inspired by https://github.com/dsaidgovsg/yarn-reverse-proxy
+
+  location ~ ^/yarn$ {
+      return 301 http://{{ spark_master_public_ip }}/yarn/;
+  }
+
+  location ~ ^/yarn/static/(.*)\.min\.js$ {
+      set $target {{ spark_master_private_ip }};
+      rewrite ^/yarn(.*)$ $1 break;
+
+      proxy_pass http://$target:8088$uri$is_args$args;
+  }
+
+  location ~ ^/yarn/(.*)?$ {
+      set $target {{ spark_master_private_ip }};
+      rewrite ^/yarn(.*)$ $1 break;
+
+      proxy_pass http://$target:8088$uri$is_args$args;
+      proxy_set_header Accept-Encoding '';
+
+      sub_filter 'src="//{{ spark_master_private_ip }}:8088' 'src="http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'href="//{{ spark_master_private_ip }}:8088' 'href="http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'href=\'//{{ spark_master_private_ip }}:8088' 'href=\'http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'http://{{ spark_master_private_ip }}:8088/' 'http://{{ spark_master_public_ip }}/yarn/';
+      sub_filter 'http://{{ spark_master_private_ip }}:8088' 'http://{{ spark_master_public_ip }}/yarn';
+      proxy_redirect http://{{ spark_master_private_ip }}:8088/ http://{{ spark_master_public_ip }}/yarn/;
+
+      sub_filter 'src="//spark-master:8088' 'src="http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'href="//spark-master:8088' 'href="http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'href=\'//spark-master:8088' 'href=\'http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'http://spark-master:8088/' 'http://{{ spark_master_public_ip }}/yarn/';
+      sub_filter 'http://spark-master:8088' 'http://{{ spark_master_public_ip }}/yarn';
+      proxy_redirect http://spark-master:8088/ http://{{ spark_master_public_ip }}/yarn/;
+
+      sub_filter 'src="//spark-master:19888' 'src="http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'href="//spark-master:19888' 'href="http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'href=\'//spark-master:19888' 'href=\'http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'http://spark-master:19888/' 'http://{{ spark_master_public_ip }}/mapreduce/';
+      sub_filter 'http://spark-master:19888' 'http://{{ spark_master_public_ip }}/mapreduce';
+      proxy_redirect http://spark-master:19888/ http://{{ spark_master_public_ip }}/mapreduce/;
+      
+      {% for ip in spark_slave_private_ips %}
+
+      sub_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href=\'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+      sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+
+      {% endfor %}
+
+      sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/yarn/';
+      sub_filter 'href="/' 'href="http://{{ spark_master_public_ip }}/yarn/';
+      sub_filter 'href=\'/' 'href=\'http://{{ spark_master_public_ip }}/yarn/';
+
       sub_filter_once off;
   }
 
-  location / {
-      rewrite ^/$ /jupyter/ redirect;
+  location ~ ^/mapreduce$ {
+      return 301 http://{{ spark_master_public_ip }}/mapreduce/;
+  }
+
+  location ~ ^/mapreduce/static/(.*)\.min\.js$ {
+      set $target {{ spark_master_private_ip }};
+      rewrite ^/mapreduce(.*)$ $1 break;
+
+      proxy_pass http://$target:19888$uri$is_args$args;
+  }
+
+  location ~ ^/mapreduce/(.*)?$ {
+      set $target {{ spark_master_private_ip }};
+      rewrite ^/mapreduce(.*)$ $1 break;
+
+      proxy_pass http://$target:19888$uri$is_args$args;
+      proxy_set_header Accept-Encoding '';
+
+      sub_filter 'src="//{{ spark_master_private_ip }}:19888' 'src="http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'href="//{{ spark_master_private_ip }}:19888' 'href="http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'href=\'//{{ spark_master_private_ip }}:19888' 'href=\'http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'http://{{ spark_master_private_ip }}:19888/' 'http://{{ spark_master_public_ip }}/mapreduce/';
+      sub_filter 'http://{{ spark_master_private_ip }}:19888' 'http://{{ spark_master_public_ip }}/mapreduce';
+      proxy_redirect http://{{ spark_master_private_ip }}:19888/ http://{{ spark_master_public_ip }}/mapreduce/;
+
+      sub_filter 'src="//spark-master:19888' 'src="http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'href="//spark-master:19888' 'href="http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'href=\'//spark-master:19888' 'href=\'http://{{ spark_master_public_ip }}/mapreduce';
+      sub_filter 'http://spark-master:19888/' 'http://{{ spark_master_public_ip }}/mapreduce/';
+      sub_filter 'http://spark-master:19888' 'http://{{ spark_master_public_ip }}/mapreduce';
+      proxy_redirect http://spark-master:19888/ http://{{ spark_master_public_ip }}/mapreduce/;
+
+      {% for ip in spark_slave_private_ips %}
+
+      sub_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href=\'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+      sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+
+      {% endfor %}
+
+      sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/mapreduce/';
+      sub_filter 'href="/' 'href="http://{{ spark_master_public_ip }}/mapreduce/';
+      sub_filter 'href=\'/' 'href=\'http://{{ spark_master_public_ip }}/mapreduce/';
+
+      sub_filter_once off;
   }
   
+  {% for ip in spark_slave_private_ips %}
+  
+  location ~ ^/nm{{ "%02d"|format(loop.index) }}$ {
+      return 301 http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+  }
+
+  location ~ ^/nm{{ "%02d"|format(loop.index) }}/static/(.*)\.min\.js$ {
+      set $target {{ ip }};
+      rewrite ^/nm{{ "%02d"|format(loop.index) }}(.*)$ $1 break;
+
+      proxy_pass http://$target:8042$uri$is_args$args;
+  }
+
+  location ~ ^/nm{{ "%02d"|format(loop.index) }}/(.*)?$ {
+      set $target {{ ip }};
+      rewrite ^/nm{{ "%02d"|format(loop.index) }}(.*)$ $1 break;
+
+      proxy_pass http://$target:8042$uri$is_args$args;
+      proxy_set_header Accept-Encoding '';
+
+      sub_filter 'src="//spark-master:8088' 'src="http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'href="//spark-master:8088' 'href="http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'href=\'//spark-master:8088' 'href=\'http://{{ spark_master_public_ip }}/yarn';
+      sub_filter 'http://spark-master:8088/' 'http://{{ spark_master_public_ip }}/yarn/';
+      sub_filter 'http://spark-master:8088' 'http://{{ spark_master_public_ip }}/yarn';
+      proxy_redirect http://spark-master:8088/ http://{{ spark_master_public_ip }}/yarn/;
+
+      sub_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href=\'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+      sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+
+      sub_filter 'src="//{{ ip }}:8042' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href="//{{ ip }}:8042' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'href=\'//{{ ip }}:8042' 'href=\'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      sub_filter 'http://{{ ip }}:8042/' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+      sub_filter 'http://{{ ip }}:8042' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+      proxy_redirect http://{{ ip }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+
+     
+      sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+      sub_filter 'href="/' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+      sub_filter 'href=\'/' 'href=\'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+
+      sub_filter_once off;
+  }
+
+  {% endfor %}
+  
+  location ~ ^/hdfs$ {
+      return 301 http://{{ spark_master_public_ip }}/hdfs/;
+  }
+
+  location ~ ^/hdfs/static/(.*)\.min\.js$ {
+      set $target {{ spark_master_private_ip }};
+      rewrite ^/hdfs(.*)$ $1 break;
+
+      proxy_pass http://$target:9870$uri$is_args$args;
+  }
+
+  location ~ ^/hdfs/(.*)?$ {
+      set $target {{ spark_master_private_ip }};
+      rewrite ^/hdfs(.*)$ $1 break;
+
+      proxy_pass http://$target:9870$uri$is_args$args;
+      proxy_set_header Accept-Encoding '';
+
+      sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/hdfs/';
+      sub_filter 'href="/' 'href="http://{{ spark_master_public_ip }}/hdfs/';
+
+      sub_filter_once off;
+  }
+
+  location /jmx {
+      proxy_pass http://localhost:9870/jmx;
+      proxy_set_header Accept-Encoding "";
+      proxy_pass_request_headers on;
+      proxy_set_header Connection "keep-alive";
+  }
+
+  location /webhdfs/ {
+      proxy_pass http://localhost:9870/webhdfs/;
+      proxy_set_header Accept-Encoding "";
+      proxy_pass_request_headers on;
+      proxy_set_header Connection "keep-alive";
+  }
+
+  location /startupProgress {
+      proxy_pass http://localhost:9870/startupProgress;
+      proxy_set_header Accept-Encoding "";
+      proxy_pass_request_headers on;
+      proxy_set_header Connection "keep-alive";
+  }
+
+  location /conf {
+      proxy_pass http://localhost:9870/conf;
+      proxy_set_header Accept-Encoding "";
+      proxy_pass_request_headers on;
+      proxy_set_header Connection "keep-alive";
+  }
+
 }

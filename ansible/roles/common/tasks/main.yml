@@ -37,7 +37,9 @@
 - name: Install nginx
   become: yes
   apt:
-          name: nginx
+          pkg: 
+                - nginx
+                - python3-passlib
           state: latest
 
 - name: Create nfs shared data directory

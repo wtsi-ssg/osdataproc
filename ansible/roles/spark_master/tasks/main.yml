@@ -57,6 +57,15 @@
 - name: Start Jupyter Lab
   service: name=jupyter-lab state=started enabled=yes
 
+- name: Configure password authentication for nginx
+  become: yes
+  htpasswd:
+          path: /etc/nginx/passwdfile
+          name: "{{ lookup('env', 'OS_USERNAME') }}"
+          password: "{{ password }}"
+          owner: root
+          group: root
+
 - name: Create nginx conf file
   become: yes
   template:

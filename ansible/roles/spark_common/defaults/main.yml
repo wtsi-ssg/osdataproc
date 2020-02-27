@@ -16,4 +16,4 @@ hail_version: 0.2.31
 hail_install_dir: "{{ venv_dir }}"
 hail_home: "{{ hail_install_dir }}"
 
-password: jupyter
+password: "{{ lookup('env', 'PASSWORD') }}"

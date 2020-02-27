@@ -5,7 +5,7 @@ exec >> /var/log/user_data.log 2>&1
 REPO=https://github.com/wtsi-ssg/osdataproc.git
 BRANCH=master
 
-git clone $REPO
+git clone -b $BRANCH $REPO
 
 echo ${spark_master_private_ip} spark-master >> /etc/hosts
 
