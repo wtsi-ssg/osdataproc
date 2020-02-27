@@ -38,14 +38,14 @@ osdataproc destroy <cluster-name>
 
 You can configure defaults for the optional arguments in the `terraform/variables.tf` file.
 
-From here you can access Jupyter Lab online at `<spark_master_public_ip>:8888` (the default password is "jupyter"). This can be changed by running `jupyter notebook password` from the master shell and entering your new password, then restarting the server with `sudo service jupyter-lab restart`).
+From here you can access Jupyter Lab online at `<spark_master_public_ip>/jupyter` (the default password is "jupyter"). This can (and should!) be changed by running `jupyter notebook password` from the master shell and entering your new password, then restarting the server with `sudo service jupyter-lab restart`.
 
-View the Spark webUI at `<spark_master_public_ip>:8080`\
+View the Spark webUI at `<spark_master_public_ip>/spark`\
 View the HDFS webUI at `<spark_master_public_ip>:9870`\
 View the YARN webUI at `<spark_master_public_ip>:8088`\
 View the Spark History Server at `<spark_master_public_ip>:18080`\
 View the MapReduce History Server at `<spark_master_public_ip>:19888`\
-View Netdata at `<spark_master_public_ip>:19999`
+View Netdata metrics at `<spark_master_public_ip>/netdata`
 
 ### Attaching a Volume
 
@@ -61,6 +61,10 @@ You must then restart the nfs-kernel-server service to pick up these changes (`s
 *  You can check provisioning status of the slave nodes by copying your SSH keys to the master node and SSH'ing to one of the slave nodes using its private IP (found at `terraform/outputs.json`). The provisioning status is found at `/var/log/user_data.log` on each slave node.
 *  osdataproc is configured to use Kryo serialization for use with Hail and up to 10x faster data serialization, although not all Serializable types are supported, and so it may be necessary to change `$SPARK_HOME/conf/spark-defaults.conf` by commenting out or removing the `spark.serializer` configuration option.
 *  For Sanger users, check [here](https://metrics.internal.sanger.ac.uk/dashboard/db/fce-available-capacity?refresh=5m&orgId=1) for available FCE capacity before creating a cluster.
+
+### Contributing and Editing
+
+You can contribute by submitting pull requests to this repository. If you create a fork you will need to update the `REPO` and `BRANCH` variables in `terraform/user_data.sh.tpl` to the new repository location for the changes you make to be reflected in the created cluster.
 
 #### TODO
 
