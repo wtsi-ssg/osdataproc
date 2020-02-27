@@ -19,7 +19,7 @@ osdataproc is a command-line tool for creating an OpenStack cluster with [Apache
 5. Download your OpenStack project openrc.sh file into your $HOME directory on the spark-runner server. You can find the specific file for your project at Project > API Access, and then Download OpenStack RC File > OpenStack RC File (Identity API v3) in the top right.
 6. Source your openrc file: `source <project-name>-openrc.sh`
 
-You can then run the `osdataproc` command as shown below. `osdataproc --help`, or `osdataproc create --help` etc. will show all possible arguments.
+You can then run the `osdataproc` command as shown below. `osdataproc --help`, or `osdataproc create --help` etc. will show all possible arguments. Once run, it will ask you for a password. This is for access to the web interfaces, including Jupyter Lab, and should not be a commonly-used password. When you first access your cluster via a browser you will be asked for a username and password. Your username is your OpenStack username, and the password is the one configured at setup. 
 
 ### Example usage
 
