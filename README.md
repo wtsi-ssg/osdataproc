@@ -38,14 +38,16 @@ osdataproc destroy <cluster-name>
 
 You can configure defaults for the optional arguments in the `terraform/variables.tf` file.
 
-From here you can access Jupyter Lab online at `<spark_master_public_ip>/jupyter` (the default password is "jupyter"). This can (and should!) be changed by running `jupyter notebook password` from the master shell and entering your new password, then restarting the server with `sudo service jupyter-lab restart`.
+From here you can access Jupyter Lab online at `<spark_master_public_ip>/jupyter`.
 
-View the Spark webUI at `<spark_master_public_ip>/spark`\
-View the HDFS webUI at `<spark_master_public_ip>:9870`\
-View the YARN webUI at `<spark_master_public_ip>:8088`\
-View the Spark History Server at `<spark_master_public_ip>:18080`\
-View the MapReduce History Server at `<spark_master_public_ip>:19888`\
-View Netdata metrics at `<spark_master_public_ip>/netdata`
+You can also view the:
+
+Spark webUI at `<spark_master_public_ip>/spark`\
+HDFS webUI at `<spark_master_public_ip>/hdfs`\
+YARN webUI at `<spark_master_public_ip>/yarn`\
+Spark History Server at `<spark_master_public_ip>/history`\
+MapReduce History Server at `<spark_master_public_ip>/mapreduce`\
+Netdata metrics at `<spark_master_public_ip>/netdata`
 
 ### Attaching a Volume
 
