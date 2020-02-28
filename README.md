@@ -71,4 +71,3 @@ You can contribute by submitting pull requests to this repository. If you create
 #### TODO
 
 *  Resize functionality (larger flavor/more nodes)
-*  Hadoop Reverse Proxy (Apache Knox?)
