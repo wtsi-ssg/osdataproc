@@ -5,7 +5,7 @@ osdataproc is a command-line tool for creating an OpenStack cluster with [Apache
 ### Setup
 
 1. Create a virtual environment, e.g. `python3 -m venv env`
-2. Download Terraform and unzip it into a location on your path, e.g. into your venv: 
+2. Download Terraform and unzip it into a location on your path, e.g. into your venv. Make sure to download the appropriate version for your operating system and architecture. 
     ```bash
     wget https://releases.hashicorp.com/terraform/0.12.20/terraform_0.12.20_linux_amd64.zip && unzip terraform_0.12.20_linux_amd64.zip -d env/bin/
     ```
@@ -71,4 +71,4 @@ You can contribute by submitting pull requests to this repository. If you create
 #### TODO
 
 *  Resize functionality (larger flavor/more nodes)
-*  Hadoop Reverse Proxy (Apache Knox?)
+*  Support for other distributions
