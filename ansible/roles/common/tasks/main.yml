@@ -6,6 +6,9 @@
 - name: Update apt cache
   apt: update_cache=yes
 
+- name: Wait for any possibly running unattended upgrade to finish
+  raw: systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+
 - name: Install OpenJDK Java 8
   become: yes
   apt:
