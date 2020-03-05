@@ -6,8 +6,8 @@
 - name: Update apt cache
   apt: update_cache=yes
 
-- name: Wait for any possibly running unattended upgrade to finish
-  raw: systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+- name: Disable periodic updates
+  shell: echo 'APT::Periodic::Enable \"0\";' > /etc/apt/apt.conf.d/10periodic
 
 - name: Install OpenJDK Java 8
   become: yes
