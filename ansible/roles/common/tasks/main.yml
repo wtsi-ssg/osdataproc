@@ -6,8 +6,12 @@
 - name: Update apt cache
   apt: update_cache=yes
 
-- name: Disable periodic updates
-  shell: echo 'APT::Periodic::Enable \"0\";' > /etc/apt/apt.conf.d/10periodic
+  # If unattended upgrades are running apt will fail, so wait
+  # (slaves wait for cloud-init before ansible starts)
+- name: Wait for lock
+  become: yes
+  shell:  while sudo fuser /var/lib/dpkg/lock && sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 5; done;
+  tags: master
 
 - name: Install OpenJDK Java 8
   become: yes
