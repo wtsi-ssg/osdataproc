@@ -7,14 +7,15 @@
   service: name=spark-history-server state=started enabled=yes
 
 - name: Install Hail and Jupyter in venv
+  become: yes
+  become_user: "{{ spark_user }}"
   pip:
           state: present
           name: 
             - "hail=={{ hail_version }}"
             - jupyterlab
           virtualenv: "{{ venv_dir }}"
-  become: yes
-  become_user: "{{ spark_user }}"
+          virtualenv_command: /usr/bin/python3 -m venv
 
 - name: Create Jupyter directories
   file:
@@ -39,7 +40,6 @@
 - name: Generate Jupyter password
   shell: "{{ venv_dir }}/bin/python -c \"from notebook.auth import passwd ; print(passwd('{{ password }}'))\""
   register: jupyter_notebookapp_password
-  changed_when: false
 
 - name: Create Jupyter config file
   become: yes
@@ -50,12 +50,10 @@
           group: "{{ spark_group }}"
 
 - name: Create Jupyter Lab service
-  template:
-          src: jupyter-lab.service.j2
-          dest: /etc/systemd/system/jupyter-lab.service
+  template: src=jupyter-lab.service.j2 dest=/etc/systemd/system/jupyter-lab.service
 
 - name: Start Jupyter Lab
-  service: name=jupyter-lab state=started enabled=yes
+  service: name=jupyter-lab state=restarted enabled=yes
 
 - name: Configure password authentication for nginx
   become: yes
@@ -68,11 +66,7 @@
 
 - name: Create nginx conf file
   become: yes
-  template:
-          src: nginx.conf.j2
-          dest: /etc/nginx/conf.d/nginx.conf
-          owner: root
-          group: root
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/nginx.conf
 
 - name: Restart nginx
   service: name=nginx state=restarted enabled=yes

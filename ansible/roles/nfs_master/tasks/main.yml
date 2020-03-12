@@ -1,9 +1,5 @@
 ---
-
-- name: Install pip
-  become: yes
-  apt:
-          name: python3-pip
+# Only runs if nfs_volume_id is set
 
 - name: Install python3-openstacksdk
   become: yes
@@ -32,14 +28,5 @@
                   os_user_domain_name: "{{ lookup ('env', 'OS_USER_DOMAIN_NAME') }}"
                   os_project_domain_name: "{{ lookup ('env', 'OS_PROJECT_DOMAIN_ID') }}"
 
-- name: Add data directory to /etc/exports
-  become: yes
-  lineinfile:
-          path: /etc/exports
-          line: "/home/ubuntu/data *(rw,sync,no_root_squash,no_subtree_check)"
-
 - name: Restart nfs-kernel-server
-  service:
-          name: nfs-kernel-server
-          state: restarted
-          enabled: yes
+  service: name=nfs-kernel-server state=started enabled=yes

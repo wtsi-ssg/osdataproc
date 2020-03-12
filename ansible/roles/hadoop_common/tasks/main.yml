@@ -16,10 +16,17 @@
           - "{{ yarn_home }}"
           - "{{ yarn_logs_dir }}"
 
-- name: Download and extract Hadoop distribution
+- name: Download Hadoop distribution
+  become: yes
+  get_url:
+          url: "{{ hadoop_mirror }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
+          dest: "/tmp/hadoop-{{ hadoop_version }}.tar.gz"
+          timeout: 60
+
+- name: Extract Hadoop distribution
   become: yes
   unarchive:
-          src: "{{ hadoop_mirror }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
+          src: "/tmp/hadoop-{{ hadoop_version }}.tar.gz"
           dest: "{{ hadoop_install_dir }}"
           owner: "{{ hadoop_user }}"
           group: "{{ hadoop_group }}"
@@ -36,7 +43,7 @@
   with_fileglob:
           - ../templates/*.j2
 
-- name: Create systemd service files
+- name: Create Hadoop systemd service files
   become: yes
   template:
           src: "{{ item }}"
@@ -54,13 +61,8 @@
           group: root
 
 - name: Create netdata HDFS.conf file
-  template:
-          src: netdata/hdfs.conf.j2
-          dest: /etc/netdata/go.d/hdfs.conf
+  template: src=netdata/hdfs.conf.j2 dest=/etc/netdata/go.d/hdfs.conf
   tags: master
 
 - name: Create netdata stream.conf file
-  template:
-          src: netdata/stream.conf.j2
-          dest: /etc/netdata/stream.conf
-
+  template: src=netdata/stream.conf.j2 dest=/etc/netdata/stream.conf

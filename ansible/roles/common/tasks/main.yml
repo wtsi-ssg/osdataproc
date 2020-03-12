@@ -3,29 +3,50 @@
 - name: Gather facts after connection
   setup:
 
+- name: Wait for cloud-init to finish
+  wait_for:
+          path: /var/lib/cloud/instance/boot-finished
+          state: present
+          timeout: 3600
+
 - name: Update apt cache
   apt: update_cache=yes
 
-  # If unattended upgrades are running apt will fail, so wait
-  # (slaves wait for cloud-init before ansible starts)
-- name: Wait for lock
-  become: yes
-  shell:  while sudo fuser /var/lib/dpkg/lock && sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 5; done;
+- name: Create nfs shared data directory
+  file:
+          state: directory
+          path: "{{ home }}/data"
+          owner: "{{ user }}"
+          group: "{{ group }}"
+
+- name: Include IP addresses
+  include_vars:
+          file: "../../../terraform/terraform.tfstate.d/{{ lookup('env', 'TF_VAR_cluster_name') }}/outputs.json"
+          name: ip_addresses
   tags: master
 
-- name: Install OpenJDK Java 8
+- name: Write hosts file
   become: yes
-  apt:
-          pkg:    
-                - software-properties-common
-                - ca-certificates
-                - openjdk-8-jre-headless
-                - openjdk-8-jdk-headless
+  template: src=hosts.j2 dest=/etc/hosts
+  tags: master
 
-- name: Install venv
+- name: Wait for automatic system updates
+  become: true
+  shell: while sudo fuser /var/lib/dpkg/{{ item }} >/dev/null 2>&1; do sleep 5; done;
+  with_items:
+    - lock
+    - lock-frontend
+
+- name: Install python packages
   become: yes
   apt:
-          name: python3-venv
+          name: "{{ python_pkgs }}"
+          state: latest
+
+- name: Install Java 8 packages
+  become: yes
+  apt:
+          name: "{{ java_pkgs }}"
           state: latest
 
 - name: Install scala
@@ -37,38 +58,14 @@
 - name: Install nfs packages
   become: yes
   apt:
-          pkg:
-                - nfs-kernel-server
-                - nfs-common
+          name: "{{ nfs_pkgs }}"
+          state: latest
 
 - name: Install nginx
   become: yes
   apt:
-          pkg: 
-                - nginx
-                - python3-passlib
+          name: nginx
           state: latest
-
-- name: Create nfs shared data directory
-  file:
-          state: directory
-          path: "{{ home }}/data"
-          owner: "{{ user }}"
-          group: "{{ group }}"
-
-- name: Add data directory to /etc/exports
-  become: yes
-  lineinfile:
-          path: /etc/exports
-          line: "{{ home }}/data *(rw,sync,no_root_squash,no_subtree_check)"
-  tags: master
-
-- name: Restart nfs-kernel-server
-  service:
-          name: nfs-kernel-server
-          state: restarted
-          enabled: yes
-  tags: master
 
 - name: Install Netdata packages
   become: yes
@@ -83,20 +80,13 @@
           version: master
           depth: 100
 
-- name: Include IP addresses
-  include_vars:
-          file: "../../../terraform/terraform.tfstate.d/{{ lookup('env', 'TF_VAR_cluster_name') }}/outputs.json"
-          name: ip_addresses
+- name: Add data directory to /etc/exports
+  become: yes
+  lineinfile:
+          path: /etc/exports
+          line: "{{ home }}/data *(rw,sync,no_root_squash,no_subtree_check)"
   tags: master
 
-- name: Copy hosts file
-  become: yes
-  template:
-          src: hosts.j2
-          dest: /etc/hosts
+- name: Restart nfs-kernel-server
+  service: name=nfs-kernel-server state=restarted enabled=yes
   tags: master
-
-- name: Create virtualenv
-  become: yes
-  become_user: "{{ user }}"
-  command: "python3 -m venv {{ venv_dir }}" 

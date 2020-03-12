@@ -6,6 +6,22 @@ java_home: /usr
 
 venv_dir: "{{ home }}/venv"
 netdata_dir: /opt/netdata
+
+java_pkgs:
+        - software-properties-common
+        - ca-certificates
+        - openjdk-8-jre-headless
+        - openjdk-8-jdk-headless
+
+nfs_pkgs:
+        - nfs-kernel-server
+        - nfs-common
+
+python_pkgs:
+        - python3-venv
+        - python3-pip
+        - python3-passlib
+
 netdata_pkgs: 
         - zlib1g-dev
         - uuid-dev
