@@ -8,6 +8,7 @@
           path: /var/lib/cloud/instance/boot-finished
           state: present
           timeout: 3600
+  tags: master
 
 - name: Update apt cache
   apt: update_cache=yes
