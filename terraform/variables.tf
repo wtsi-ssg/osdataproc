@@ -26,8 +26,16 @@ variable "network_name" {
   default = "cloudforms_network"
 }
 
+variable "network_id" {
+  default = "03bccdae-535f-4d95-8dc6-445309c28320"
+}
+
+variable "lustre_net" {
+  default = "eeded367-662a-4d39-8319-216bce127393"
+}
+
 variable "image_name" {
-  default = "bionic-server"
+  default = "bionic-WTSI-lustre-2_12_3_docker_20200211_4016b2"
 }
 
 variable "flavor_name" {

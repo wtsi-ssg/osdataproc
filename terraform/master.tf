@@ -51,15 +51,38 @@ resource "openstack_networking_secgroup_rule_v2" "spark_master_slave_in" {
   security_group_id = openstack_networking_secgroup_v2.spark_master.id
 }
 
+resource "openstack_networking_port_v2" "portA" {
+  name           = "${var.cluster_name}portA-${count.index}"
+  count          = var.slaves + 1
+  network_id     = var.network_id
+  admin_state_up = "true"
+
+  security_group_ids = ["189be81b-761d-428d-a0c6-cb8f3f0a279f","66f70b37-4d93-4425-9043-6640eec5aeec"]
+
+}
+
+resource "openstack_networking_port_v2" "portL" {
+  name           = "${var.cluster_name}portL-${count.index}"
+  count          = var.slaves + 1
+  network_id     = var.lustre_net
+  admin_state_up = "true"
+
+  no_security_groups = "true"
+}
+
 resource "openstack_compute_instance_v2" "spark_master" {
   name            = "${var.os_user_name}-${var.cluster_name}-master"
   image_name      = var.image_name
   flavor_name     = var.flavor_name
   key_pair        = openstack_compute_keypair_v2.spark_keypair[0].id
-  security_groups = [openstack_networking_secgroup_v2.spark_master.id]
+#  security_groups = [openstack_networking_secgroup_v2.spark_master.id]
  
   network {
-    name = var.network_name
+    port = openstack_networking_port_v2.portA.*.id[0]
+  }
+
+  network {
+    port = openstack_networking_port_v2.portL.*.id[0]
   }
 
   provisioner "local-exec" {

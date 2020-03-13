@@ -42,7 +42,7 @@ def cli():
     parser_create.add_argument('-f', '--flavor', default='m1.medium', help='OpenStack flavor to use')
     parser_create.add_argument('-p', '--public-key', help='path to public key file', required=True)
     parser_create.add_argument('--network-name', default='cloudforms_network', help='OpenStack network to use')
-    parser_create.add_argument('--image-name', default='bionic-server', help='OpenStack image to use - Ubuntu only')
+    parser_create.add_argument('--image-name', default='bionic-WTSI-lustre-2_12_3_docker_20200211_4016b2', help='OpenStack image to use - Ubuntu only')
     parser_create.add_argument('-v', '--nfs-volume', help='ID of an nfs volume to attach to the cluster')
     parser_create.set_defaults(func=create)
 
