@@ -59,8 +59,12 @@ server {
       sub_filter       'href="app'  'href="/spark/app/';
   }
 
-  location ~ ^/history/(.*)?$ {
-      rewrite ^/history(.*)$ $1 break;
+  location = /sparkhist {
+      return 301 /sparkhist/;
+  }
+
+  location ~ ^/sparkhist/(.*)?$ {
+      rewrite ^/sparkhist(.*)$ $1 break;
       proxy_pass http://{{ spark_master_private_ip }}:18080$uri$is_args$args;
       proxy_set_header Accept-Encoding "";
       proxy_set_header Host $host;
@@ -69,17 +73,17 @@ server {
 
       sub_filter_types "*";
       sub_filter_once off;
-      sub_filter       'src="/'        'src="/history/';
-      sub_filter       'href="/'       'href="/history/';
+      sub_filter       'src="/'        'src="/sparkhist/';
+      sub_filter       'href="/'       'href="/sparkhist/';
   }
 
   location ~ ^/api/(.*)$ {
-      rewrite ^/history/api(.*)$ $1 break;
+      rewrite ^/sparkhist/api(.*)$ $1 break;
       proxy_pass http://{{ spark_master_private_ip }}:18080;
   }
 
   location ~ ^/static/(.*)$ {
-      rewrite ^/history/static(.*)$ $1 break;
+      rewrite ^/sparkhist/static(.*)$ $1 break;
       proxy_pass http://{{ spark_master_private_ip }}:18080;
   }
 
