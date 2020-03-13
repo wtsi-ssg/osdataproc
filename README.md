@@ -45,7 +45,7 @@ You can also view the:
 Spark webUI at `<spark_master_public_ip>/spark`\
 HDFS webUI at `<spark_master_public_ip>/hdfs`\
 YARN webUI at `<spark_master_public_ip>/yarn`\
-Spark History Server at `<spark_master_public_ip>/history`\
+Spark History Server at `<spark_master_public_ip>/sparkhist`\
 MapReduce History Server at `<spark_master_public_ip>/mapreduce`\
 Netdata metrics at `<spark_master_public_ip>/netdata`
 

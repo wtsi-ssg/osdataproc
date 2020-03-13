@@ -87,6 +87,11 @@ server {
       proxy_pass http://{{ spark_master_private_ip }}:18080;
   }
 
+  location ~ ^/history/(.*)$ {
+      rewrite ^/sparkhist/history(.*)$ $1 break;
+      proxy_pass http://{{ spark_master_private_ip }}:18080;
+  }
+
   # Inspired by https://github.com/dsaidgovsg/yarn-reverse-proxy
 
   location ~ ^/yarn$ {
