@@ -25,8 +25,9 @@
 - name: Write slave IPs and hostnames to /etc/hosts
   lineinfile:
           path: /etc/hosts
+          regexp: "{{ item.1 }}$"
           line: "{{ item.0 }} {{ item.1 }}"
-  loop: "{{ ips.stdout_lines|zip(hostnames.stdout_lines)|list }}"
+  loop: "{{ ips.stdout_lines|zip(hostnames.stdout_lines)|reverse|list }}"
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"

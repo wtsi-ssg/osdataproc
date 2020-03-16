@@ -13,7 +13,9 @@ if [ ! -d $FOLDER ] ; then
     git clone -b $BRANCH $REPO $FOLDER
 fi
 
-echo ${spark_master_private_ip} spark-master >> /etc/hosts
+if ! grep -Eq "spark-master$" /etc/hosts ; then
+    echo ${spark_master_private_ip} spark-master >> /etc/hosts
+fi
 
 apt update
 apt install software-properties-common -y
