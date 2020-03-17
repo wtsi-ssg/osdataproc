@@ -16,6 +16,7 @@ java_pkgs:
 nfs_pkgs:
         - nfs-kernel-server
         - nfs-common
+        - cryptsetup
 
 python_pkgs:
         - python3-venv

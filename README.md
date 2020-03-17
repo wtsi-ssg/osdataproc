@@ -54,6 +54,8 @@ Netdata metrics at `<spark_master_public_ip>/netdata`
 You can attach a volume as an NFS share to your cluster. This option, at present, will mount the `data` directory in the home directory of your master node to all of the slave nodes, and attach the volume by default to `/dev/vdb` on the master node.
 To mount the data directory, identify the device you want to mount, and then mount it on the `data` directory. E.g. `mount /dev/vdb1 /home/ubuntu/data`.
 
+If you have an encrypted LUKS volume you must first decrypt the volume before you mount it, using e.g. `cryptsetup`. For example, `sudo cryptsetup luksOpen /dev/vdb2 hail-tmp_dir`, then mount the device with `sudo mount /dev/mapper/hail-tmp_dir /home/ubuntu/data`.
+
 You must then restart the nfs-kernel-server service to pick up these changes (`service nfs-kernel-server restart`), and reboot the slave nodes to pick up the new filesystem changes. `osdataproc reboot <cluster-name>` from the same location you provisioned the cluster will reboot all slave nodes of the specified cluster.
 
 ### Troubleshooting Notes
