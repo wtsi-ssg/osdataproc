@@ -62,7 +62,7 @@ You must then restart the nfs-kernel-server service to pick up these changes (`s
 
 *  If your private key has a passphrase, Ansible will not be able to connect to the created instances unless you add your key to ssh-agent. To use a passphrase you can type `eval $(ssh-agent)` and `ssh-add`, entering your private key passphrase when prompted. Then go on to create your cluster as above.
 *  You can view Ansible logs at `osdataproc/state/<cluster-name>/ansible-master.log` to see the configuration state of your master.
-*  You can check provisioning status of the slave nodes by copying your SSH keys to the master node and SSH'ing to one of the slave nodes using its private IP (found at `terraform/outputs.json`). The provisioning status is found at `/var/log/user_data.log` on each slave node.
+*  You can check provisioning status of the slave nodes by copying your SSH keys to the master node and SSH'ing to one of the slave nodes using its private IP. The provisioning status is found at `/var/log/user_data.log` on each slave node.
 *  osdataproc is configured to use Kryo serialization for use with Hail and up to 10x faster data serialization, although not all Serializable types are supported, and so it may be necessary to change `$SPARK_HOME/conf/spark-defaults.conf` by commenting out or removing the `spark.serializer` configuration option.
 *  For Sanger users, check [here](https://metrics.internal.sanger.ac.uk/dashboard/db/fce-available-capacity?refresh=5m&orgId=1) for available FCE capacity before creating a cluster.
 
