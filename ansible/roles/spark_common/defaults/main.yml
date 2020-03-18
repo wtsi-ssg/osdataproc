@@ -1,5 +1,5 @@
 ---
-spark_version: 2.4.4
+spark_version: 2.4.5
 spark_mirror: https://archive.apache.org/dist/spark
 
 spark_download_dir: /tmp
@@ -12,7 +12,7 @@ spark_group: "{{ group }}"
 spark_master_host: spark-master
 spark_master_port: 7077
 
-hail_version: 0.2.31
+hail_version: 0.2.34
 hail_install_dir: "{{ venv_dir }}"
 hail_home: "{{ hail_install_dir }}"
 
