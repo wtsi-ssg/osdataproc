@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+input_args=( "$@" )
 OSDP=$(readlink -f "$0")
 OSDP_HOME=$(dirname "$OSDP")
 
@@ -28,34 +29,27 @@ export TF_VAR_cluster_name=${2}
 if [[ ${3} =~ ^[0-9]+$ ]] ; then
 	export TF_VAR_slaves=$((${3}))
 fi
-if [[ ${4} == "None" ]] ; then
-	echo "Default flavor chosen"
-else
-	export TF_VAR_flavor_name=${4}
+if [[ -f ${4} ]] ; then
+	export TF_VAR_identity_file=$(< ${4})
 fi
-if [[ -f ${5} ]] ; then
-	export TF_VAR_identity_file=$(< ${5})
-elif [[ ${5} == "None" ]] ; then
-	echo ${5}
-fi
-export TF_VAR_network_name=${6}
-export TF_VAR_image_name=${7}
-if [[ ${8} == "None" ]] ; then
-	echo "No volume to attach"
-	export NFS_VOLUME_ID=''
-else
-	export NFS_VOLUME_ID=${8}
-fi
-export TF_VAR_nfs_volume_id=${NFS_VOLUME_ID}
 
+tfvars=(flavor_name network_name image_name nfs_volume_id)
+# Update tfvars variables if set, otherwise use defaults
+for i in "${!tfvars[@]}" ; do
+        if [ "${input_args[i+4]}" != None ] ; then
+                export TF_VAR_${tfvars[i]}=${input_args[i+4]}
+        fi
+done
+	
 # generate API key for netdata
 export NETDATA_API_KEY=$(uuidgen)
 export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
-
 ansible() {
         export ANSIBLE_HOST_KEY_CHECKING=False
-        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_${1} > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
+        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
+		${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_${1} \
+		> ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
 }
 
 cd ${OSDP_HOME}/terraform

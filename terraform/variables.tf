@@ -1,3 +1,23 @@
+variable "slaves" {
+  default = 2
+}
+
+variable "network_name" {
+  default = "cloudforms_network"
+}
+
+variable "image_name" {
+  default = "bionic-server"
+}
+
+variable "flavor_name" {
+  default = "m1.medium"
+}
+
+variable "nfs_volume_id" {
+  default = ""
+}
+
 variable "os_user_name" {
   description = "The username for the tenant."
 }
@@ -16,23 +36,7 @@ variable "os_auth_url" {
 
 variable "os_interface" {}
 
-variable "slaves" {
-  default = 2
-}
-
 variable "cluster_name" {}
-
-variable "network_name" {
-  default = "cloudforms_network"
-}
-
-variable "image_name" {
-  default = "bionic-server"
-}
-
-variable "flavor_name" {
-  default = "m1.medium"
-}
 
 variable "spark_master_public_ip" {
   description = "Floating IP to associate to master node."
@@ -44,5 +48,3 @@ variable "identity_file" {
 }
 
 variable "netdata_api_key" {}
-
-variable "nfs_volume_id" {}

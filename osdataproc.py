@@ -38,11 +38,11 @@ def cli():
     parser_create = subparsers.add_parser('create', help='create a Spark cluster')
 
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
-    parser_create.add_argument('-n', '--num-slaves', default='2', type=int, help='number of slave nodes')
-    parser_create.add_argument('-f', '--flavor', default='m1.medium', help='OpenStack flavor to use')
+    parser_create.add_argument('-n', '--num-slaves', type=int, help='number of slave nodes')
     parser_create.add_argument('-p', '--public-key', help='path to public key file', required=True)
-    parser_create.add_argument('--network-name', default='cloudforms_network', help='OpenStack network to use')
-    parser_create.add_argument('--image-name', default='bionic-server', help='OpenStack image to use - Ubuntu only')
+    parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
+    parser_create.add_argument('--network-name', help='OpenStack network to use')
+    parser_create.add_argument('--image-name', help='OpenStack image to use - Ubuntu only')
     parser_create.add_argument('-v', '--nfs-volume', help='ID of an nfs volume to attach to the cluster')
     parser_create.set_defaults(func=create)
 

@@ -25,8 +25,8 @@ You can then run the `osdataproc` command as shown below. `osdataproc --help`, o
 
 ```bash
 osdataproc create [--num-slaves] <number of desired slave nodes> 
-                  [--flavor] <OpenStack flavor to use>
                   --public-key <path to public key file>
+                  [--flavor] <OpenStack flavor to use>
                   [--network-name] <OpenStack network to use>
                   [--image-name] <OpenStack image to use - Ubuntu images only>
                   [--nfs-volume] <OpenStack volume to attach as NFS shared volume>
@@ -55,8 +55,6 @@ You can attach a volume as an NFS share to your cluster. This option, at present
 To mount the data directory, identify the device you want to mount, and then mount it on the `data` directory. E.g. `mount /dev/vdb1 /home/ubuntu/data`.
 
 If you have an encrypted LUKS volume you must first decrypt the volume before you mount it, using e.g. `cryptsetup`. For example, `sudo cryptsetup luksOpen /dev/vdb2 hail-tmp_dir`, then mount the device with `sudo mount /dev/mapper/hail-tmp_dir /home/ubuntu/data`.
-
-You must then restart the nfs-kernel-server service to pick up these changes (`service nfs-kernel-server restart`), and reboot the slave nodes to pick up the new filesystem changes. `osdataproc reboot <cluster-name>` from the same location you provisioned the cluster will reboot all slave nodes of the specified cluster.
 
 ### Troubleshooting Notes
 
