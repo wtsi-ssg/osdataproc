@@ -1,7 +1,3 @@
 ---
 dependencies:
-        - role: nfs_master
-          vars:
-                  nfs_volume_id: "{{ lookup('env', 'NFS_VOLUME_ID') }}"
-          when: nfs_volume_id != ''
         - role: hadoop_common
