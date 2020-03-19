@@ -20,3 +20,6 @@ yarn_logs_dir: "{{ yarn_home }}/logs"
 
 aws_java_sdk_version: 1.11.375 # check https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-aws/{{ hadoop_version }}
 
+# Slack/email netdata notification settings (email client must be configured)
+netdata_slack_webhook: ""
+netdata_email: ""

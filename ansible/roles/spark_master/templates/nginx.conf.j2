@@ -24,10 +24,12 @@ server {
   }
 
   location = /netdata {
+      auth_basic off;
       return 301 /netdata/;
   }
 
   location ~ /netdata/(?<ndpath>.*) {
+      auth_basic off;
       rewrite /netdata/(?<ndpath>.*) /$1 break;
       proxy_pass http://localhost:19999;
 

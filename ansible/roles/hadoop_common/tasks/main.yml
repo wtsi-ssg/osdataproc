@@ -20,13 +20,13 @@
   become: yes
   get_url:
           url: "{{ hadoop_mirror }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
-          dest: "/tmp/hadoop-{{ hadoop_version }}.tar.gz"
+          dest: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
           timeout: 60
 
 - name: Extract Hadoop distribution
   become: yes
   unarchive:
-          src: "/tmp/hadoop-{{ hadoop_version }}.tar.gz"
+          src: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
           dest: "{{ hadoop_install_dir }}"
           owner: "{{ hadoop_user }}"
           group: "{{ hadoop_group }}"
@@ -54,16 +54,25 @@
   with_fileglob:
           - ../templates/systemd/*.j2 
 
-- name: Ensure netdata HDFS directory exists
+- name: Ensure netdata extra HDFS directories exist
   file:
           state: directory
-          path: /etc/netdata/go.d/
+          path: "/etc/netdata/{{ item }}/"
           owner: root
           group: root
+  with_items:
+          - go.d
+          - health.d
 
-- name: Create netdata HDFS.conf file
+- name: Create netdata hdfs.conf file
   template: src=netdata/hdfs.conf.j2 dest=/etc/netdata/go.d/hdfs.conf
   tags: master
 
 - name: Create netdata stream.conf file
   template: src=netdata/stream.conf.j2 dest=/etc/netdata/stream.conf
+
+- name: Create netdata health.hdfs.conf file
+  template: src=netdata/health.hdfs.conf.j2 dest=/etc/netdata/health.d/hdfs.conf
+
+- name: Create netdata health_alarm_notify.conf file
+  template: src=netdata/health_alarm_notify.conf.j2 dest=/etc/netdata/health_alarm_notify.conf
