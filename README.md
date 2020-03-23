@@ -30,7 +30,8 @@ osdataproc create [--num-slaves] <number of desired slave nodes>
                   [--network-name] <OpenStack network to use>
                   [--image-name] <OpenStack image to use - Ubuntu images only>
                   [--nfs-volume] <OpenStack volume to attach as NFS shared volume>
-                  [--floating-ip] <OpenStack floating IP to associate to master node - will automatically create one if not specified>
+                  [--floating-ip] <OpenStack floating IP to associate to master node - 
+                                   will automatically create one if not specified>
                   <cluster-name>
 
 osdataproc destroy <cluster-name>
