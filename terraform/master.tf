@@ -63,7 +63,7 @@ resource "openstack_compute_instance_v2" "spark_master" {
   }
 
   provisioner "local-exec" {
-    command = "echo '[spark_master]\nubuntu@${openstack_networking_floatingip_v2.public_ip.0.address}' > terraform.tfstate.d/${var.cluster_name}/hosts_master"
+    command = var.spark_master_public_ip == "" ? "echo '[spark_master]\nubuntu@${openstack_networking_floatingip_v2.public_ip.0.address}' > terraform.tfstate.d/${var.cluster_name}/hosts_master" : "echo '[spark_master]\nubuntu@${var.spark_master_public_ip}' > terraform.tfstate.d/${var.cluster_name}/hosts_master"
   }
 }
 

@@ -33,7 +33,7 @@ if [[ -f ${4} ]] ; then
 	export TF_VAR_identity_file=$(< ${4})
 fi
 
-tfvars=(flavor_name network_name image_name nfs_volume_id)
+tfvars=(flavor_name network_name image_name nfs_volume_id spark_master_public_ip)
 # Update tfvars variables if set, otherwise use defaults
 for i in "${!tfvars[@]}" ; do
         if [ "${input_args[i+4]}" != None ] ; then

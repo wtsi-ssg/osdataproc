@@ -10,5 +10,5 @@ output "spark_master_private_ip" {
 }
 
 output "spark_master_public_ip" {
-  value = openstack_networking_floatingip_v2.public_ip.0.address
+  value = var.spark_master_public_ip == "" ? openstack_networking_floatingip_v2.public_ip.0.address : var.spark_master_public_ip
 }

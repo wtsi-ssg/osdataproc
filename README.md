@@ -30,13 +30,14 @@ osdataproc create [--num-slaves] <number of desired slave nodes>
                   [--network-name] <OpenStack network to use>
                   [--image-name] <OpenStack image to use - Ubuntu images only>
                   [--nfs-volume] <OpenStack volume to attach as NFS shared volume>
+                  [--floating-ip] <OpenStack floating IP to associate to master node - will automatically create one if not specified>
                   <cluster-name>
 
 osdataproc destroy <cluster-name>
 ```
 `osdataproc create` will output the public ip of your master node when the node has been created. You can connect to this with `ssh ubuntu@<spark_master_public_ip>`. It will take a few minutes for the configuration to complete.
 
-You can configure defaults for the optional arguments in the `terraform/variables.tf` file.
+You can configure defaults for the arguments in the `terraform/variables.tf` file.
 
 From here you can access Jupyter Lab online at `<spark_master_public_ip>/jupyter`.
 

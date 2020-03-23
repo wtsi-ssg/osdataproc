@@ -44,6 +44,7 @@ def cli():
     parser_create.add_argument('--network-name', help='OpenStack network to use')
     parser_create.add_argument('--image-name', help='OpenStack image to use - Ubuntu only')
     parser_create.add_argument('-v', '--nfs-volume', help='ID of an nfs volume to attach to the cluster')
+    parser_create.add_argument('--floating-ip', help='OpenStack floating IP to associate to the master node - will automatically create one if not specified')
     parser_create.set_defaults(func=create)
 
 

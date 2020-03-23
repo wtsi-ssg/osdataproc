@@ -1,4 +1,4 @@
-// TODO if user specifies public ip (spark_master_public_ip="172.x.x.x")
+// if user specifies public ip (spark_master_public_ip="x.x.x.x")
 // then do not create a new one
 resource "openstack_networking_floatingip_v2" "public_ip" {
   count   = var.spark_master_public_ip == "" ? 1 : 0
