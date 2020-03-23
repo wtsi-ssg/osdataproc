@@ -17,3 +17,8 @@ resource "openstack_compute_keypair_v2" "spark_keypair" {
   count = 1
   public_key = var.identity_file
 }
+
+data "openstack_networking_network_v2" "network_id" {
+  name = var.network_name
+}
+
