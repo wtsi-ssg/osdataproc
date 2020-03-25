@@ -2,6 +2,16 @@
 
 - name: Start Spark slave
   service: name=spark-slave state=started enabled=yes
- 
+
+  # virtualenv python needs to be present on all slave nodes, so create it here
+- name: Create virtualenv
+  become: yes
+  become_user: "{{ spark_user }}"
+  pip:
+          state: present
+          name: pyspark
+          virtualenv: "{{ venv_dir }}"
+          virtualenv_command: python3 -m venv
+
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"
