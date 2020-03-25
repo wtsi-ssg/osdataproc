@@ -114,6 +114,10 @@
           chdir: "{{ nginx_install_dir }}"
   when: nginx_configure.changed
 
+- name: Create nginx service file
+  become: yes
+  template: src=nginx.service.j2 dest=/etc/systemd/system/nginx.service
+
 - name: Install Netdata packages
   become: yes
   apt:
