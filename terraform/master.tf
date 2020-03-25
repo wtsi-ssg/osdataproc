@@ -42,6 +42,16 @@ resource "openstack_networking_secgroup_rule_v2" "spark_master_http_in" {
   security_group_id = openstack_networking_secgroup_v2.spark_master.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "spark_master_https_in" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  description       = "Allows inbound connections to https server"
+  protocol          = "tcp"
+  port_range_min    = 443
+  port_range_max    = 443
+  security_group_id = openstack_networking_secgroup_v2.spark_master.id
+}
+
 resource "openstack_networking_secgroup_rule_v2" "spark_master_slave_in" {
   direction         = "ingress"
   ethertype         = "IPv4"

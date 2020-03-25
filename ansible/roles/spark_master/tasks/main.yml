@@ -14,20 +14,19 @@
           name: 
             - "hail=={{ hail_version }}"
             - jupyterlab
+            - pyopenssl
           virtualenv: "{{ venv_dir }}"
           virtualenv_command: /usr/bin/python3 -m venv
 
 - name: Create Jupyter directories
   file:
           state: directory
-          path: "{{ dir }}"
+          path: "{{ item }}"
           owner: "{{ spark_user }}"
           group: "{{ spark_group }}"
   loop:
           - "{{ home }}/.jupyter"
           - "{{ home }}/jupyter"
-  loop_control:
-          loop_var: dir
 
 - name: Symlink Jupyter directory in data directory
   file:
@@ -55,6 +54,34 @@
 - name: Start Jupyter Lab
   service: name=jupyter-lab state=restarted enabled=yes
 
+- name: Ensure ssl directories exist
+  file:
+          state: directory
+          path: "{{ item }}"
+          owner: root
+          group: root
+  loop:
+          - /etc/ssl/private
+          - /etc/ssl/csr
+          - /etc/ssl/crt
+
+- name: Generate OpenSSL private key
+  openssl_privatekey:
+          path: "{{ ssl_privatekey_path }}"
+
+- name: Generate an OpenSSL Certificate Signing Request
+  openssl_csr:
+          path: "{{ ssl_csr_path }}"
+          privatekey_path: "{{ ssl_privatekey_path }}"
+          common_name: osdataproc
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+          path: "{{ ssl_crt_path }}"
+          privatekey_path: "{{ ssl_privatekey_path }}"
+          csr_path: "{{ ssl_csr_path }}"
+          provider: selfsigned
+
 - name: Configure password authentication for nginx
   become: yes
   htpasswd:
@@ -66,7 +93,7 @@
 
 - name: Create nginx conf file
   become: yes
-  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf/nginx.conf
 
 - name: Restart nginx
   service: name=nginx state=restarted enabled=yes

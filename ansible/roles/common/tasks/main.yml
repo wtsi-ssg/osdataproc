@@ -34,7 +34,7 @@
 - name: Wait for automatic system updates
   become: true
   shell: while sudo fuser /var/lib/dpkg/{{ item }} >/dev/null 2>&1; do sleep 5; done;
-  with_items:
+  loop:
     - lock
     - lock-frontend
 
@@ -62,11 +62,57 @@
           name: "{{ nfs_pkgs }}"
           state: latest
 
-- name: Install nginx
+- name: Install nginx packages
   become: yes
   apt:
-          name: nginx
+          name: "{{ nginx_pkgs }}"
           state: latest
+
+- name: Download nginx sources
+  get_url:
+    url: "{{ nginx_tarball_url }}"
+    dest: "/tmp/{{ nginx_version }}.tar.gz"
+  register: nginx_source
+
+- name: Unpack nginx
+  unarchive:
+    copy: no
+    dest: /tmp/
+    src: "{{ nginx_source.dest }}"
+  when: nginx_source.changed
+  register: nginx_source_unpack
+
+- name: Create required Nginx dirs
+  become: yes
+  file:
+          path: "{{ item }}"
+          state: directory
+          owner: root
+          group: root
+          mode: 0755
+  loop:
+          - "{{ nginx_prefix }}"
+
+- name: Install nginx http_substitutions_filter_module
+  git:
+          repo: https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git
+          dest: "{{ subs_filter_path }}"
+          version: master
+
+- name: Configuring nginx source with custom modules
+  become: yes
+  command: "./configure --prefix={{ nginx_prefix }} {{ nginx_custom_modules }} --add-module={{ subs_filter_path }}"
+  args:
+          chdir: "{{ nginx_install_dir }}"
+  when: nginx_source_unpack.changed
+  register: nginx_configure
+
+- name: Installing nginx
+  become: yes
+  shell: make && make install
+  args:
+          chdir: "{{ nginx_install_dir }}"
+  when: nginx_configure.changed
 
 - name: Install Netdata packages
   become: yes
@@ -86,6 +132,10 @@
   lineinfile:
           path: /etc/exports
           line: "{{ home }}/data *(rw,sync,no_root_squash,no_subtree_check)"
+  tags: master
+
+- name: Start nginx
+  service: name=nginx state=started enabled=yes
   tags: master
 
 - name: Restart nfs-kernel-server

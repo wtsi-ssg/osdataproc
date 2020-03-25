@@ -1,4 +1,3 @@
 ---
 dependencies:
-        - role: spark_common
         - role: hadoop_slaves

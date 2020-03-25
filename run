@@ -75,11 +75,11 @@ case ${1} in
 	        if ! terraform workspace \select ${2} ; then
 			echo "Cluster not found"
 		else
-			terraform workspace \select ${2} && \
+			terraform workspace \select ${2}
 			export TF_VAR_network_name=$(terraform show -json terraform.tfstate.d/${2}/terraform.tfstate \
-				| python3 -c "import sys, json; print(json.load(sys.stdin)['values']['root_module']['resources'][0]['values']['name'])") && \
-			terraform destroy && \
-			terraform workspace \select default && \
+			| python3 -c "import sys, json; print(json.load(sys.stdin)['values']['root_module']['resources'][0]['values']['name'])")
+			terraform destroy
+			terraform workspace \select default
 			terraform workspace delete ${2}
 		fi
 		exit 0

@@ -42,3 +42,15 @@ netdata_pkgs:
         - curl
         - python
 
+nginx_pkgs:
+        - zlib1g-dev
+        - libpcre3
+        - libpcre3-dev
+        - libssl-dev
+
+nginx_version: nginx-1.17.9
+nginx_tarball_url: "http://nginx.org/download/{{ nginx_version }}.tar.gz"
+nginx_install_dir: "/tmp/{{ nginx_version }}"
+nginx_prefix: "/etc/nginx"
+nginx_custom_modules: "--with-http_auth_request_module --with-http_sub_module --with-http_ssl_module"
+subs_filter_path: "/tmp/ngx_http_substitutions_filter_module"
