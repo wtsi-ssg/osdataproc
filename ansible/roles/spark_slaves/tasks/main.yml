@@ -11,15 +11,24 @@
           state: present
           name: pyspark
           virtualenv: "{{ venv_dir }}"
-          virtualenv_command: python3 -m venv
+          virtualenv_command: /usr/bin/python3 -m venv
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"
 
-- name: Remount data directory
+- name: Wait for master nfs server to come up
+  wait_for:
+          state: started
+          host: "{{ spark_master_private_ip }}"
+          port: 111
+          delay: 10
+          sleep: 5
+  when: nfs_volume_id != ''
+
+- name: Mount data directory
   become: yes
   mount:
           path: /home/ubuntu/data
           src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
           fstype: nfs
-          state: remounted
+          state: mounted

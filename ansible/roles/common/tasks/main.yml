@@ -62,6 +62,10 @@
           name: "{{ nfs_pkgs }}"
           state: latest
 
+- name: Disable nfs-server
+  service: name=nfs-server state=stopped enabled=no
+  tags: master
+
 - name: Install nginx packages
   become: yes
   apt:

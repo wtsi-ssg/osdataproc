@@ -1,10 +1,10 @@
 ---
 
-- name: Mount data directory
-  become: yes
-  mount:
-          path: /home/ubuntu/data
-          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
-          fstype: nfs
-          state: mounted
-  ignore_errors: yes
+#- name: Mount data directory
+#  become: yes
+#  mount:
+#          path: /home/ubuntu/data
+#          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
+#          fstype: nfs
+#          state: mounted
+#  ignore_errors: yes
