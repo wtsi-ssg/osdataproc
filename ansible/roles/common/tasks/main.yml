@@ -145,7 +145,3 @@
 - name: Start nginx
   service: name=nginx state=started enabled=yes
   tags: master
-
-- name: Restart nfs-kernel-server
-  service: name=nfs-kernel-server state=restarted enabled=yes
-  tags: master

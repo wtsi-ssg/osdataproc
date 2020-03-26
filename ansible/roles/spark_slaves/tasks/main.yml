@@ -23,6 +23,7 @@
           port: 111
           delay: 10
           sleep: 5
+          timeout: 3600
   when: nfs_volume_id != ''
 
 - name: Mount data directory
@@ -32,3 +33,4 @@
           src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
           fstype: nfs
           state: mounted
+  when: nfs_volume_id != ''
