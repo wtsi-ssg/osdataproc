@@ -15,3 +15,11 @@
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"
+
+- name: Remount data directory
+  become: yes
+  mount:
+          path: /home/ubuntu/data
+          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
+          fstype: nfs
+          state: remounted
