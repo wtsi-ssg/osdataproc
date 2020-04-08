@@ -7,10 +7,14 @@
 - name: Ensure Spark directories exist
   file:
           state: directory
-          path: "{{ spark_install_dir }}"
+          path: "{{ item }}"
           mode: 0755
           owner: "{{ spark_user }}"
           group: "{{ spark_group }}"
+  loop:
+          - "{{ spark_download_dir }}"
+          - "{{ spark_install_dir }}"
+
 
 - name: Download Spark distribution
   become: yes

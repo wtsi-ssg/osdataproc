@@ -8,6 +8,7 @@
           owner: "{{ hadoop_user }}"
           group: "{{ hadoop_group }}"
   loop:
+          - "{{ hadoop_download_dir }}"
           - "{{ hadoop_install_dir }}"
           - "{{ hadoop_logs_dir }}"
           - "{{ hdfs_home }}"
