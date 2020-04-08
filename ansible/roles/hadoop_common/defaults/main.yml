@@ -9,6 +9,7 @@ hadoop_home: "{{ hadoop_install_dir }}"
 hadoop_user: "{{ user }}"
 hadoop_group: "{{ group }}"
 hadoop_logs_dir: "{{ hadoop_home }}/logs"
+hadoop_conf_dir: "{{ hadoop_home }}/etc/hadoop"
 
 hdfs_home: /opt/hdfs
 hdfs_replicas: 1

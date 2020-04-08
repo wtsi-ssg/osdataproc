@@ -12,7 +12,7 @@
   become: yes
   mount:
           path: "{{ hadoop_download_dir }}"
-          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
+          src: "{{ spark_master_private_ip }}:{{ hadoop_download_dir }}"
           fstype: nfs
           state: mounted
 

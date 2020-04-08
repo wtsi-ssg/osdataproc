@@ -11,6 +11,7 @@
           - "{{ hadoop_download_dir }}"
           - "{{ hadoop_install_dir }}"
           - "{{ hadoop_logs_dir }}"
+          - "{{ hadoop_conf_dir }}"
           - "{{ hdfs_home }}"
           - "{{ hdfs_namenode_dir }}"
           - "{{ hdfs_datanode_dir }}"

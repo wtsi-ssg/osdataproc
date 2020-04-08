@@ -4,6 +4,7 @@ spark_mirror: https://archive.apache.org/dist/spark
 
 spark_download_dir: /opt/osdataproc
 spark_install_dir: /opt/spark
+spark_conf_dir: "{{ spark_install_dir }}/conf"
 
 spark_home: "{{ spark_install_dir }}"
 spark_user: "{{ user }}"

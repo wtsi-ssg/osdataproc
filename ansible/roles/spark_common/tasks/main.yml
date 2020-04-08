@@ -14,6 +14,7 @@
   loop:
           - "{{ spark_download_dir }}"
           - "{{ spark_install_dir }}"
+          - "{{ spark_conf_dir }}"
 
 
 - name: Download Spark distribution
