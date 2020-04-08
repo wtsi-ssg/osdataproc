@@ -1,5 +1,16 @@
 ---
 
+- name: Extract Spark distribution
+  become: yes
+  unarchive:
+          src: "{{ spark_download_dir }}/spark-{{ spark_version }}.tgz"
+          dest: "{{ spark_install_dir }}"
+          owner: "{{ spark_user }}"
+          group: "{{ spark_group }}"
+          extra_opts: [--strip-components=1]
+          keep_newer: yes
+          remote_src: yes
+
 - name: Start Spark slave
   service: name=spark-slave state=started enabled=yes
 

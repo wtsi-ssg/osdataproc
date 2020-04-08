@@ -1,5 +1,26 @@
 ---
 
+- name: Mount data dir from attached volume
+  mount:
+          state: mounted
+          src: /dev/vdb1
+          fstype: ext4
+          path: "{{ home }}/data"
+  ignore_errors: yes
+
+- name: Ensure NFS shared directories are exported
+  become: yes
+  lineinfile:
+          path: /etc/exports
+          state: present
+          line: "{{ item }}"
+  loop:
+          - "{{ home }}/data *(rw,sync,no_root_squash,no_subtree_check)"
+          - "{{ hadoop_download_dir }} *(rw,sync,no_root_squash,no_subtree_check)"
+
+- name: Start NFS server
+  service: name=nfs-server state=started enabled=yes
+
 - name: Start Spark master
   service: name=spark-master state=started enabled=yes
 

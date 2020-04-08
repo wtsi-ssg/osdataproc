@@ -18,6 +18,7 @@
           url: "{{ spark_mirror }}/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
           dest: "{{ spark_download_dir }}/spark-{{ spark_version}}.tgz"
           timeout: 60
+  tags: master
 
 - name: Extract Spark distribution
   become: yes
@@ -29,6 +30,7 @@
           extra_opts: [--strip-components=1]
           keep_newer: yes
           remote_src: yes
+  tags: master
 
 - name: Copy Spark configuration files
   become: yes

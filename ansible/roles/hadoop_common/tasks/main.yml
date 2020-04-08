@@ -22,6 +22,7 @@
           url: "{{ hadoop_mirror }}/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
           dest: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
           timeout: 60
+  tags: master
 
 - name: Extract Hadoop distribution
   become: yes
@@ -33,6 +34,7 @@
           extra_opts: [--strip-components=1]
           keep_newer: yes
           remote_src: yes
+  tags: master
 
 - name: Copy Hadoop configuration files
   become: yes

@@ -6,7 +6,7 @@ exec >> /var/log/user_data.log 2>&1
 rm /var/lib/cloud/instance/sem/config_scripts_user
 
 REPO=https://github.com/wtsi-ssg/osdataproc.git
-BRANCH=master
+BRANCH=feat/nfs
 FOLDER=/tmp/osdataproc
 
 if [ ! -d $FOLDER ] ; then

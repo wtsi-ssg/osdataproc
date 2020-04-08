@@ -1,5 +1,32 @@
 ---
 
+- name: Wait for master nfs server to come up
+  wait_for:
+          state: started
+          host: "{{ spark_master_private_ip }}"
+          port: 111
+          sleep: 5
+          timeout: 3600
+
+- name: Mount download directory
+  become: yes
+  mount:
+          path: "{{ hadoop_download_dir }}"
+          src: "{{ spark_master_private_ip }}:/home/ubuntu/data"
+          fstype: nfs
+          state: mounted
+
+- name: Extract Hadoop distribution
+  become: yes
+  unarchive:
+          src: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
+          dest: "{{ hadoop_install_dir }}"
+          owner: "{{ hadoop_user }}"
+          group: "{{ hadoop_group }}"
+          extra_opts: [--strip-components=1]
+          keep_newer: yes
+          remote_src: yes
+
 - name: Start HDFS datanode
   become: yes
   service: name=hdfs-datanode state=started enabled=yes

@@ -2,7 +2,7 @@
 hadoop_version: 3.2.1
 hadoop_mirror: https://archive.apache.org/dist/hadoop/common
 
-hadoop_download_dir: /tmp
+hadoop_download_dir: /opt/osdataproc
 hadoop_install_dir: /opt/hadoop
 
 hadoop_home: "{{ hadoop_install_dir }}"
