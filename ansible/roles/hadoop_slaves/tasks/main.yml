@@ -5,6 +5,7 @@
           state: started
           host: "{{ spark_master_private_ip }}"
           port: 111
+          delay: 10
           sleep: 5
           timeout: 3600
 

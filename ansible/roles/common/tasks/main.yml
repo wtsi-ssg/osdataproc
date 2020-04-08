@@ -135,13 +135,6 @@
           version: master
           depth: 100
 
-- name: Add data directory to /etc/exports
-  become: yes
-  lineinfile:
-          path: /etc/exports
-          line: "{{ home }}/data *(rw,sync,no_root_squash,no_subtree_check)"
-  tags: master
-
 - name: Start nginx
   service: name=nginx state=started enabled=yes
   tags: master
