@@ -127,8 +127,8 @@
           timeout: 3600
   with_items: "{{ spark_slave_private_ips }}"
 
-- name: Disable NFS server
-  service: name=nfs-server state=stopped enabled=no
+  #- name: Disable NFS server
+  #  service: name=nfs-server state=stopped enabled=no
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"
