@@ -32,7 +32,7 @@
   become_user: "{{ spark_user }}"
   pip:
           state: present
-          name: 
+          name:
             - "hail=={{ hail_version }}"
             - jupyterlab
             - pyopenssl
@@ -118,6 +118,17 @@
 
 - name: Restart nginx
   service: name=nginx state=restarted enabled=yes
+
+- name: Wait for Spark slaves to start on all slave hosts
+  wait_for:
+          state: started
+          host: "{{ item }}"
+          port: 8081
+          timeout: 3600
+  with_items: "{{ spark_slave_private_ips }}"
+
+- name: Disable NFS server
+  service: name=nfs-server state=stopped enabled=no
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"
