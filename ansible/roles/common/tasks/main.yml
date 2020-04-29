@@ -71,6 +71,7 @@
   apt:
           name: "{{ nginx_pkgs }}"
           state: latest
+  tags: master
 
 - name: Download nginx sources
   get_url:
@@ -86,6 +87,7 @@
     src: "{{ nginx_source.dest }}"
   when: nginx_source.changed
   register: nginx_source_unpack
+  tags: master
 
 - name: Create required Nginx dirs
   become: yes
@@ -97,6 +99,7 @@
           mode: 0755
   loop:
           - "{{ nginx_prefix }}"
+  tags: master
 
 - name: Install nginx http_substitutions_filter_module
   git:
@@ -104,6 +107,7 @@
           dest: "{{ subs_filter_path }}"
           version: master
   when: nginx_source_unpack.changed
+  tags: master
 
 - name: Configuring nginx source with custom modules
   become: yes
@@ -112,6 +116,7 @@
           chdir: "{{ nginx_install_dir }}"
   when: nginx_source_unpack.changed
   register: nginx_configure
+  tags: master
 
 - name: Installing nginx
   become: yes
@@ -119,6 +124,7 @@
   args:
           chdir: "{{ nginx_install_dir }}"
   when: nginx_configure.changed
+  tags: master
 
 - name: Create nginx service file
   become: yes
