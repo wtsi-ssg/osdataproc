@@ -41,6 +41,7 @@ netdata_pkgs:
         - pkg-config
         - curl
         - python
+        - cmake
 
 nginx_pkgs:
         - zlib1g-dev
