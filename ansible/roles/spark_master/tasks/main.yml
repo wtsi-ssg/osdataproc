@@ -1,5 +1,10 @@
 ---
 
+- name: Stat device mountpoint
+  stat:
+        path: "{{ device_mountpoint }}"
+  register: dev
+
 - name: Mount data dir from attached volume (/dev/vdb1 or other known source)
   mount:
           state: mounted
@@ -8,6 +13,7 @@
           path: "{{ home }}/data"
   ignore_errors: yes
   register: mounted
+  when: dev.stat.isblk
 
 - name: Ensure NFS shared directories are exported
   become: yes
