@@ -34,7 +34,7 @@
           port: 2049
           delay: 10
           sleep: 5
-          timeout: 3600
+          timeout: 86400
   when: nfs_volume_id != ''
 
 - name: Mount data directory

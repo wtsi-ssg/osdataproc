@@ -1,12 +1,13 @@
 ---
 
-- name: Mount data dir from attached volume
+- name: Mount data dir from attached volume (/dev/vdb1 or other known source)
   mount:
           state: mounted
-          src: /dev/vdb1
+          src: "{{ device_mountpoint }}"
           fstype: ext4
           path: "{{ home }}/data"
   ignore_errors: yes
+  register: mounted
 
 - name: Ensure NFS shared directories are exported
   become: yes
@@ -127,8 +128,9 @@
           timeout: 3600
   with_items: "{{ spark_slave_private_ips }}"
 
-  #- name: Disable NFS server
-  #  service: name=nfs-server state=stopped enabled=no
+- name: Disable NFS server
+  service: name=nfs-server state=stopped enabled=no
+  when: mounted.failed
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"

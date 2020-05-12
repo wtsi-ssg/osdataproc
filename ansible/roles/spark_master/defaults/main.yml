@@ -1,4 +1,5 @@
 ---
+device_mountpoint: /dev/vdb1
 
 ssl_privatekey_path: /etc/ssl/private/osdataproc.pem
 ssl_csr_path: /etc/ssl/csr/osdataproc.csr
