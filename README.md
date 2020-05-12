@@ -55,7 +55,7 @@ Netdata metrics at `<spark_master_public_ip>/netdata`
 
 You can attach a volume as an NFS share to your cluster. This option, at present, will mount the `data` directory in the home directory of your master node to all of the slave nodes, and attach the volume by default to the device mountpoint on the master node.
 
-See [NFS.md](https://github.com/wtsi-ssg/osdataproc/NFS.md) for details.
+See [NFS.md](https://github.com/wtsi-ssg/osdataproc/blob/master/NFS.md) for details.
 
 ### Troubleshooting Notes
 
