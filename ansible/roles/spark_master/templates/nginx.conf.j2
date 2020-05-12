@@ -82,6 +82,7 @@ http {
           auth_basic off;
           rewrite /netdata/(?<ndpath>.*) /$1 break;
           proxy_pass http://localhost:19999;
+          proxy_redirect http://localhost:19999/ http://{{ spark_master_public_ip }}/netdata/;
     
           proxy_set_header X-Forwarded-Host $host;
           proxy_set_header X-Forwarded-Server $host;
