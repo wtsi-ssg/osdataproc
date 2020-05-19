@@ -38,7 +38,7 @@ resource "openstack_compute_instance_v2" "spark_slave" {
                        slaves                  = var.slaves,
                        slave_ips               = jsonencode(openstack_networking_port_v2.spark_slave.*.all_fixed_ips),
                        netdata_api_key         = var.netdata_api_key,
-                       nfs_volume_id           = var.nfs_volume_id})
+                       nfs_volume              = var.nfs_volume})
 
   network {
     port = element(openstack_networking_port_v2.spark_slave.*.id,count.index)

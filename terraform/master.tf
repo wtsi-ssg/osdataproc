@@ -83,7 +83,7 @@ resource "openstack_compute_instance_v2" "spark_master" {
 }
 
 resource "openstack_compute_volume_attach_v2" "spark_volume" {
-  count       = var.nfs_volume_id == "" ? 0 : 1
+  count       = var.nfs_volume == "" ? 0 : 1
   instance_id = openstack_compute_instance_v2.spark_master.id
-  volume_id   = var.nfs_volume_id
+  volume_id   = var.nfs_volume
 }

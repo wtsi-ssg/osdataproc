@@ -14,7 +14,13 @@ variable "flavor_name" {
   default = "m1.medium"
 }
 
-variable "nfs_volume_id" {
+variable "nfs_volume" {
+  description = "The ID of a volume to mount to a cluster"
+  default = ""
+}
+
+variable "spark_master_public_ip" {
+  description = "Floating IP to associate to master node."
   default = ""
 }
 
@@ -37,11 +43,6 @@ variable "os_auth_url" {
 variable "os_interface" {}
 
 variable "cluster_name" {}
-
-variable "spark_master_public_ip" {
-  description = "Floating IP to associate to master node."
-  default = ""
-}
 
 variable "identity_file" {
   default = ""
