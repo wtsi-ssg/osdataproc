@@ -7,7 +7,7 @@ OSDP_HOME=$(dirname "$0")
 cleanup () {
 	echo "ERROR: Only partial configuration could complete. Cleaning up created resources..."
 	sleep 3
-	cd ${OSDP_HOME}/terraform
+	cd ${OSDP_HOME}/terraform/cluster
 	export TF_WARN_OUTPUT_ERRORS=1 # Destroy even if output variables do not evaluate
 	terraform workspace \select $TF_VAR_cluster_name && \
 	terraform destroy -auto-approve && \
@@ -32,7 +32,7 @@ if [[ -f ${4} ]] ; then
 	export TF_VAR_identity_file=$(< ${4})
 fi
 
-tfvars=(flavor_name network_name image_name nfs_volume spark_master_public_ip)
+tfvars=(flavor_name network_name image_name nfs_volume volume_size spark_master_public_ip)
 # Update tfvars variables if set, otherwise use defaults
 for i in "${!tfvars[@]}" ; do
         if [ "${input_args[i+4]}" != None ] ; then
@@ -51,7 +51,7 @@ ansible() {
 		> ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
 }
 
-cd ${OSDP_HOME}/terraform
+cd ${OSDP_HOME}/terraform/cluster
 case ${1} in
 	init)
 		terraform init -input=false
@@ -60,7 +60,7 @@ case ${1} in
 		trap cleanup ERR
 		echo "Password for web authentication: "
 		read -sr PASSWORD
-		export PASSWORD=$PASSWORD
+#		export PASSWORD=$PASSWORD
 	       	terraform workspace \select ${2} || terraform workspace new ${2}
 		terraform plan -out="terraform.tfstate.d/${2}/plan" -input=false
 		terraform apply -input=false "terraform.tfstate.d/${2}/plan"
