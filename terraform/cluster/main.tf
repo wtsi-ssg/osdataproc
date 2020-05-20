@@ -22,3 +22,12 @@ data "openstack_networking_network_v2" "network_id" {
   name = var.network_name
 }
 
+resource "openstack_blockstorage_volume_v3" "volume" {
+  description = "osdataproc provisioned volume"
+  name        = var.nfs_volume
+  size        = var.volume_size
+  count       = var.nfs_volume == "" && var.volume_size != "" ? 0 : 1
+  lifecycle {
+    prevent_destroy = true
+  }
+}

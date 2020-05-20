@@ -46,9 +46,9 @@ export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
 ansible() {
         export ANSIBLE_HOST_KEY_CHECKING=False
-        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
+        ansible-playbook -i ${OSDP_HOME}/terraform/cluster/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
 		${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_${1} \
-		> ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
+		> ${OSDP_HOME}/terraform/cluster/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
 }
 
 cd ${OSDP_HOME}/terraform/cluster
@@ -63,6 +63,7 @@ case ${1} in
 #		export PASSWORD=$PASSWORD
 	       	terraform workspace \select ${2} || terraform workspace new ${2}
 		terraform plan -out="terraform.tfstate.d/${2}/plan" -input=false
+		exit 0
 		terraform apply -input=false "terraform.tfstate.d/${2}/plan"
 		terraform output -json > terraform.tfstate.d/${2}/outputs.json
 		echo "Running provisioning software. This will take a few minutes."

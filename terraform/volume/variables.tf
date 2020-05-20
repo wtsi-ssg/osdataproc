@@ -1,2 +1,2 @@
-variable "volume_name" {}
+variable "nfs_volume" {}
 variable "volume_size" {}
