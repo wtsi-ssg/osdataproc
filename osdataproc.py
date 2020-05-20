@@ -5,7 +5,8 @@ import sys
 import openstack as openstack_client
 
 def create(args):
-    args.nfs_volume = get_volume_id(args.nfs_volume)
+    if args.nfs_volume is not None:
+        args.nfs_volume = get_volume_id(args.nfs_volume)
     act(args, 'apply')
 
 def destroy(args):
