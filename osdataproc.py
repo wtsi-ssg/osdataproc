@@ -2,15 +2,27 @@ import argparse
 import subprocess
 import os
 import sys
-import openstack as openstack_client
+import volumes
 
 def create(args):
-    if args.nfs_volume is not None:
-        args.nfs_volume = get_volume_id(args.nfs_volume)
+    if args.nfs_volume is not None and args.volume_size is None:
+        # find ID of specified volume
+        args.nfs_volume = volumes.get_volume_id(args.nfs_volume, to_create=False)
+    elif args.nfs_volume is not None and args.volume_size is not None:
+        # create a volume and return its ID if unique name
+        if volumes.get_volume_id(args.nfs_volume, to_create=True) is None:
+            args.nfs_volume = volumes.create_volume(args.nfs_volume, args.volume_size)
+        else:
+            sys.exit("Please use a unique volume name.")
     act(args, 'apply')
 
 def destroy(args):
+    volumes_to_destroy = volumes.get_attached_volumes(
+            os.environ['OS_USERNAME'] + "-" + vars(args)['cluster-name'] +  "-master")
     act(args, 'destroy')
+    if vars(args)['destroy-volumes'] and volumes_to_destroy is not None:
+        # destroy volumes attached to instance
+        volumes.destroy_volumes(volumes_to_destroy)
 
 def update(args):
     act(args, 'update')
@@ -25,25 +37,6 @@ def act(args, command):
     run_args = get_args(args, command)
     subprocess.run([f'{osdataproc_home}/run', 'init'])
     subprocess.run(run_args)
-
-def get_volume_id(volume):
-    openstack = openstack_client.connect(auth_url=os.environ['OS_AUTH_URL'],
-                                       project_name=os.environ['OS_PROJECT_NAME'],
-                                       username=os.environ['OS_USERNAME'],
-                                       password=os.environ['OS_PASSWORD'],
-                                       region_name=os.environ['OS_REGION_NAME'])
-
-    volume_ids = [(v.id, v.name, v.status, v.size) for v in openstack.volume.volumes() if v.name == volume or v.id == volume]
-
-    if len(volume_ids) == 0:
-        sys.exit("No volume with name '" + volume +"' found, please check that a volume with that name exists.")
-    if len(volume_ids) > 1:
-        sys.exit("Multiple volumes with name '" + volume + "' found, please specify the id of the desired volume." + \
-                "\nVolumes found were:\n" + \
-                "\n".join("| ID: %s | Name: %s | Status: %-9s | Size: %-2i |" % tup for tup in volume_ids))
-
-    return volume_ids[0][0] if volume_ids else None
-
 
 def get_args(args, command):
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
@@ -66,12 +59,14 @@ def cli():
     parser_create.add_argument('--network-name', help='OpenStack network to use')
     parser_create.add_argument('-i', '--image-name', help='OpenStack image to use - Ubuntu only')
     parser_create.add_argument('-v', '--nfs-volume', help='Name or ID of an nfs volume to attach to the cluster') 
+    parser_create.add_argument('-s', '--volume-size', help='Size of OpenStack volume to create')
     parser_create.add_argument('--floating-ip', help='OpenStack floating IP to associate to the master node - will automatically create one if not specified')
     parser_create.set_defaults(func=create)
 
 
     parser_destroy = subparsers.add_parser('destroy', help='destroy a Spark cluster')
     parser_destroy.add_argument('cluster-name', help='name of the cluster to destroy')
+    parser_destroy.add_argument('-d', '--destroy-volumes', dest='destroy-volumes', action='store_true', help='also destroy volumes attached to cluster')
     parser_destroy.set_defaults(func=destroy)
 
     parser_reboot = subparsers.add_parser('reboot', help='reboot all slave nodes of a cluster, e.g. to pick up mount point changes')
