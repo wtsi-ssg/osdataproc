@@ -1,0 +1,5 @@
+---
+password: "{{ lookup('env', 'PASSWORD') }}"
+volume_keyfile: /root/keyfile
+volume_device: /dev/vdb
+device_name: "{{ lookup('env', 'TF_VAR_device_name') }}"

@@ -1,20 +1,5 @@
 ---
 
-- name: Stat device mountpoint
-  stat:
-        path: "{{ device_mountpoint }}"
-  register: dev
-
-- name: Mount data dir from attached volume (/dev/vdb1 or other known source)
-  mount:
-          state: mounted
-          src: "{{ device_mountpoint }}"
-          fstype: ext4
-          path: "{{ home }}/data"
-  ignore_errors: yes
-  register: mounted
-  when: dev.stat.isblk
-
 - name: Ensure NFS shared directories are exported
   become: yes
   lineinfile:
@@ -34,7 +19,7 @@
 - name: Start Spark history server
   service: name=spark-history-server state=started enabled=yes
 
-- name: Install Hail and Jupyter in venv
+- name: Install python modules in venv
   become: yes
   become_user: "{{ spark_user }}"
   pip:
@@ -43,6 +28,15 @@
             - "hail=={{ hail_version }}"
             - jupyterlab
             - pyopenssl
+          virtualenv: "{{ venv_dir }}"
+          virtualenv_command: /usr/bin/python3 -m venv
+
+- name: Install extra python modules in venv
+  become: yes
+  become_user: "{{ spark_user }}"
+  pip:
+          state: present
+          name: "{{ extra_python_modules }}"
           virtualenv: "{{ venv_dir }}"
           virtualenv_command: /usr/bin/python3 -m venv
 
@@ -125,18 +119,6 @@
 
 - name: Restart nginx
   service: name=nginx state=restarted enabled=yes
-
-- name: Wait for Spark slaves to start on all slave hosts
-  wait_for:
-          state: started
-          host: "{{ item }}"
-          port: 8081
-          timeout: 3600
-  with_items: "{{ spark_slave_private_ips }}"
-
-- name: Disable NFS server
-  service: name=nfs-server state=stopped enabled=no
-  when: mounted.failed
 
 - name: Install Netdata
   shell: "cd {{ netdata_dir }} && ./netdata-installer.sh --dont-wait"

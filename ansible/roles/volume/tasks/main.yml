@@ -1,0 +1,74 @@
+---
+- name: Create data volume LUKS keyfile
+  copy:
+    dest: "{{ volume_keyfile }}"
+    content: "{{ password }}"
+    mode: "0600"
+  no_log: true
+
+- name: Get data volume info
+  parted:
+    device: "{{ volume_device }}"
+    state: info
+  register: volume_info
+
+- name: Create data partition
+  parted:
+    device: "{{ volume_device }}"
+    state: present
+    label: gpt
+    name: osdataproc
+    number: 1
+    part_type: primary
+  when: volume_info.partitions == []
+
+- name: Get data volume info
+  parted:
+    device: "{{ volume_device }}"
+    state: info
+  register: partition_info
+
+- name: Ensure LUKS container is configured on extra volumes
+  luks_device:
+    state: present
+    device: "{{ volume_device }}1"
+    name: osdataproc
+    keyfile: "{{ volume_keyfile }}"
+  when: partition_info.partitions[0].name == "osdataproc"
+  no_log: true
+
+- name: Ensure LUKS containers are configured in crypttab
+  crypttab:
+    state: present
+    name: "{{ device_name }}"
+    password: "{{ volume_keyfile }}"
+    backing_device: "{{ volume_device }}1"
+  no_log: true
+
+- name: Let SystemD create new services based on the new entries in crypttab
+  systemd:
+    daemon_reload: yes
+
+- name: Ensure SystemD services handles LUKS containers
+  become: yes
+  service:
+    name: "systemd-cryptsetup@osdataproc"
+    enabled: yes
+    state: started
+  when: 
+    - partition_info.partitions != []
+    - partition_info.partitions[0].name == "osdataproc"
+
+- name: Ensure that a filesystem is created on the data volume
+  filesystem:
+    dev: "{{ device_name }}"
+    type: ext4
+  when: volume_info.partitions == []
+  
+- name: Mount data dir from attached volume
+  mount:
+          state: mounted
+          src: "{{ device_name }}"
+          fstype: ext4
+          path: "/home/ubuntu/data"
+  ignore_errors: yes

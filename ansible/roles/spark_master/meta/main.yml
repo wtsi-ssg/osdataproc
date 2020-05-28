@@ -1,3 +1,5 @@
 ---
 dependencies:
         - role: hadoop_master
+        - role: volume
+          when: nfs_volume != ''

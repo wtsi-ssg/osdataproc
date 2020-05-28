@@ -1,5 +1,5 @@
 ---
-device_mountpoint: /dev/vdb1
+nfs_volume: "{{ lookup('env', 'TF_VAR_nfs_volume') }}"
 
 ssl_privatekey_path: /etc/ssl/private/osdataproc.pem
 ssl_csr_path: /etc/ssl/csr/osdataproc.csr

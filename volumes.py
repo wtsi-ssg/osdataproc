@@ -40,7 +40,7 @@ def create_volume(volume_name, volume_size):
 
     volume = openstack.volume.create_volume(name=volume_name, size=volume_size)
     if volume:
-        print("Volume created with name '" + volume_name + "' and size " + volume_size + "GiB.")
+        print("Volume created with name '" + volume_name + "' and size " + str(volume_size) + "GiB.")
     return volume.id
 
 def destroy_volumes(volumes):

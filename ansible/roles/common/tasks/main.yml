@@ -144,6 +144,12 @@
           version: master
           depth: 100
 
+- name: Install extra system packages
+  become: yes
+  apt:
+          name: "{{ extra_pkgs }}"
+          state: latest
+
 - name: Start nginx
   service: name=nginx state=started enabled=yes
   tags: master

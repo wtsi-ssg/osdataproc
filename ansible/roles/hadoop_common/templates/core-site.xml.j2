@@ -25,16 +25,10 @@
           <name>io.file.buffer.size</name>
           <value>131072</value>
   </property>
+{% for key, value in hadoopConfig.items() | sort %}
   <property>
-          <name>fs.s3a.endpoint</name>
-          <value>cog.sanger.ac.uk</value>
+	  <name>{{ key }}</name>
+	  <value>{{ value }}</value>
   </property>
-  <property>
-	  <name>fs.s3a.access.key</name>
-	  <value></value>
-  </property>
-  <property>
-	  <name>fs.s3a.secret.key</name>
-	  <value></value>
-  </property>
+{% endfor %}
 </configuration>

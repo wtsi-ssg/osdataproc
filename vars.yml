@@ -1,0 +1,44 @@
+###############################################################################
+### Default osdataproc configuration 
+osdataproc:
+  cluster-name: 
+  num_slaves: 2
+  public_key: ~/.ssh/id_rsa.pub
+  flavor: m1.medium
+  network_name: cloudforms_network
+  image_name: bionic-server
+  nfs_volume: 
+  volume_size: 
+  ## Mountpoint of volume, defaults to /dev/mapper/osdataproc. Change if using pre-created volume (e.g. /dev/mapper/hail-tmp_dir for volumes created with https://github.com/wtsi-hgi/hgi-cloud, or /dev/vdb1)
+  device_name: /dev/mapper/osdataproc
+  ## Persistent floating IP must be in pool, otherwise new one will be allocated
+  floating_ip: 
+
+###############################################################################
+### Default software versions 
+hadoop_version: 3.2.1
+spark_version: 2.4.5
+hail_version: 0.2.41
+
+## Additional Ubuntu packages to install on the cluster
+extra_pkgs:
+
+## Additional python modules to install on the cluster
+extra_python_modules:
+
+###############################################################################
+### Default hadoop configuration. Full configuration options at bottom of https://hadoop.apache.org/docs/current/
+hadoopConfig:
+  dfs.replication: 1
+  fs.s3a.access.key: 
+  fs.s3a.secret.key: 
+  fs.s3a.endpoint: cog.sanger.ac.uk
+  fs.s3a.connection.maximum: 100
+
+###############################################################################
+### Default spark configuration. Add extra options as available at https://spark.apache.org/docs/latest/configuration.html
+sparkConfig:
+  ## Remove spark.serializer and spark.kryo.registrator when not using Hail
+  spark.serializer: org.apache.spark.serializer.KryoSerializer
+  spark.kryo.registrator: is.hail.kryo.HailKryoRegistrator 
+  spark.speculation: true

@@ -1,7 +1,14 @@
 #!/bin/bash
 set -e
-input_args=( "$@" )
 OSDP_HOME=$(dirname "$0")
+
+export TF_IN_AUTOMATION=1 # Limit Terraform output
+export TF_VAR_os_user_name=$OS_USERNAME
+export TF_VAR_os_tenant_name=$OS_PROJECT_NAME
+export TF_VAR_os_password=$OS_PASSWORD
+export TF_VAR_os_auth_url=$OS_AUTH_URL
+export TF_VAR_os_region_name=$OS_REGION_NAME
+export TF_VAR_os_interface=$OS_INTERFACE
 
 # Runs on terraform apply error - delete created resources
 cleanup () {
@@ -16,30 +23,30 @@ cleanup () {
 	echo "Tidy up complete. Please try again. Check that enough resources exist."
 }
 
-export TF_IN_AUTOMATION=1 # Limit Terraform output
-export TF_VAR_os_user_name=$OS_USERNAME
-export TF_VAR_os_tenant_name=$OS_PROJECT_NAME
-export TF_VAR_os_password=$OS_PASSWORD
-export TF_VAR_os_auth_url=$OS_AUTH_URL
-export TF_VAR_os_region_name=$OS_REGION_NAME
-export TF_VAR_os_interface=$OS_INTERFACE
+get_apply_vars () {
+	input_args=($@)
+	if [[ ${3} =~ ^[0-9]+$ ]] ; then
+		export TF_VAR_slaves=$((${3}))
+	fi
+	keyfile="${4/#\~/$HOME}" # expand tilde to $HOME
+	if [[ -f ${keyfile} ]] ; then
+		export TF_VAR_identity_file=$(< ${keyfile})
+	else
+		echo "The file could not be found. Please enter a valid path to a public key."
+		exit 1
+	fi
+	
+	tfvars=(flavor_name network_name image_name nfs_volume volume_size device_name spark_master_public_ip)
+	# Update tfvars variables if set, otherwise use defaults
+	for i in "${!tfvars[@]}" ; do
+	        if [ "${input_args[i+4]}" != None ] ; then
+	                export TF_VAR_${tfvars[i]}=${input_args[i+4]}
+	        fi
+	done
+		
+}
 
 export TF_VAR_cluster_name=${2}
-if [[ ${3} =~ ^[0-9]+$ ]] ; then
-	export TF_VAR_slaves=$((${3}))
-fi
-if [[ -f ${4} ]] ; then
-	export TF_VAR_identity_file=$(< ${4})
-fi
-
-tfvars=(flavor_name network_name image_name nfs_volume volume_size spark_master_public_ip)
-# Update tfvars variables if set, otherwise use defaults
-for i in "${!tfvars[@]}" ; do
-        if [ "${input_args[i+4]}" != None ] ; then
-                export TF_VAR_${tfvars[i]}=${input_args[i+4]}
-        fi
-done
-	
 # generate API key for netdata
 export NETDATA_API_KEY=$(uuidgen)
 export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
@@ -47,7 +54,7 @@ export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 ansible() {
         export ANSIBLE_HOST_KEY_CHECKING=False
         ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
-		${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' --limit spark_${1} \
+		${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e '@../vars.yml' --limit spark_${1} \
 		> ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
 }
 
@@ -58,7 +65,8 @@ case ${1} in
 		;;
 	apply)
 		trap cleanup ERR
-		echo "Password for web authentication: "
+		get_apply_vars $@
+		echo "Password for web authentication and encrypted volume: "
 		read -sr PASSWORD
 		export PASSWORD=$PASSWORD
 	       	terraform workspace \select ${2} || terraform workspace new ${2}
@@ -71,7 +79,7 @@ case ${1} in
 		exit 0
 		;;
 	destroy)
-	        if ! terraform workspace \select ${2} ; then
+		if ! terraform workspace \select ${2} ; then
 			echo "Cluster not found"
 		else
 			terraform workspace \select ${2}
@@ -102,6 +110,6 @@ case ${1} in
 		exit 0
 		;;
 	*)
-		exit 0
+		exit 1
 		;;
 esac
