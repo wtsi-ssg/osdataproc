@@ -25,7 +25,7 @@
           <name>io.file.buffer.size</name>
           <value>131072</value>
   </property>
-{% for key, value in hadoopConfig.items() | sort %}
+{% for key, value in hadoop_config.core_site.items() %}
   <property>
 	  <name>{{ key }}</name>
 	  <value>{{ value }}</value>

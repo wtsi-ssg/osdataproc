@@ -17,10 +17,6 @@
 <!-- Put site-specific property overrides in this file. -->
 <configuration>
   <property>
-          <name>mapreduce.framework.name</name>
-          <value>yarn</value>
-  </property>
-  <property>
           <name>mapreduce.jobhistory.address</name>
           <value>{{ spark_master_private_ip }}:10020</value>
   </property>
@@ -52,4 +48,10 @@
           <name>mapreduce.application.classpath</name>
           <value>$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*,$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*,$HADOOP_MAPRED_HOME/share/hadoop/common/*,$HADOOP_MAPRED_HOME/share/hadoop/common/lib/*,$HADOOP_MAPRED_HOME/share/hadoop/yarn/*,$HADOOP_MAPRED_HOME/share/hadoop/yarn/lib/*,$HADOOP_MAPRED_HOME/share/hadoop/hdfs/*,$HADOOP_MAPRED_HOME/share/hadoop/hdfs/lib/*</value>
   </property>
+{% for key, value in hadoop_config.mapred_site.items() %}
+  <property>
+	  <name>{{ key }}</name>
+	  <value>{{ value }}</value>
+  </property>
+{% endfor %}
 </configuration>

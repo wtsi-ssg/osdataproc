@@ -24,11 +24,6 @@
           <name>dfs.datanode.data.dir</name>
 	  <value>file://{{ hdfs_datanode_dir }}</value>
   </property>
-  <!--  <property>
-          <name>dfs.replication</name>
-	  <value>{{ hdfs_replicas }}</value>
-  </property>
--->
   <property>
           <name>dfs.permissions</name>
           <value>false</value>
@@ -37,4 +32,10 @@
           <name>dfs.datanode.use.datanode.hostname</name>
           <value>false</value>
   </property>
+{% for key, value in hadoop_config.hdfs_site.items() %}
+  <property>
+	  <name>{{ key }}</name>
+	  <value>{{ value }}</value>
+  </property>
+{% endfor %}
 </configuration>

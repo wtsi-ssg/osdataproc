@@ -1,22 +1,22 @@
 ###############################################################################
-### Default osdataproc configuration 
+### Default osdataproc configuration
 osdataproc:
-  cluster-name: 
+  cluster-name:
   num_slaves: 2
   ## Path to public key file
   public_key: ~/.ssh/id_rsa.pub
   flavor: m1.medium
   network_name: cloudforms_network
   image_name: bionic-server
-  nfs_volume: 
-  volume_size: 
+  nfs_volume:
+  volume_size:
   ## Mountpoint of volume, default is /dev/mapper/osdataproc. Change if using pre-created volume (e.g. /dev/mapper/hail-tmp_dir for volumes created with https://github.com/wtsi-hgi/hgi-cloud, or /dev/vdb1)
   device_name: /dev/mapper/osdataproc
   ## Floating IP must already be in pool, otherwise leave blank for new one to be allocated
-  floating_ip: 
+  floating_ip:
 
 ###############################################################################
-### Default software versions 
+### Default software versions
 hadoop_version: 3.2.1
 spark_version: 2.4.5
 hail_version: 0.2.41
@@ -29,17 +29,25 @@ extra_python_modules:
 
 ###############################################################################
 ### Default hadoop configuration. Full configuration options at bottom of https://hadoop.apache.org/docs/current/
-hadoopConfig:
-  dfs.replication: 1
-  fs.s3a.access.key: 
-  fs.s3a.secret.key: 
-  fs.s3a.endpoint: cog.sanger.ac.uk
-  fs.s3a.connection.maximum: 100
+hadoop_config:
+  core_site:
+    fs.s3a.access.key:
+    fs.s3a.secret.key:
+    fs.s3a.endpoint: cog.sanger.ac.uk
+    fs.s3a.connection.maximum: 100
+  hdfs_site:
+    dfs.replication: 1
+  mapred_site:
+    mapreduce.framework.name: yarn
+  yarn_site:
+    yarn.nodemanager.aux-services: mapreduce_shuffle
+    yarn.nodemanager.aux-services.mapreduce_shuffle.class: org.apache.hadoop.mapred.ShuffleHandler
+
 
 ###############################################################################
 ### Default spark configuration. Add extra options as available at https://spark.apache.org/docs/latest/configuration.html
-sparkConfig:
+spark_config:
   ## Remove spark.serializer and spark.kryo.registrator when not using Hail
   spark.serializer: org.apache.spark.serializer.KryoSerializer
-  spark.kryo.registrator: is.hail.kryo.HailKryoRegistrator 
+  spark.kryo.registrator: is.hail.kryo.HailKryoRegistrator
   spark.speculation: true

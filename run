@@ -39,9 +39,9 @@ get_apply_vars () {
 	tfvars=(flavor_name network_name image_name nfs_volume volume_size device_name spark_master_public_ip)
 	# Update tfvars variables if set, otherwise use defaults
 	for i in "${!tfvars[@]}" ; do
-	        if [ "${input_args[i+4]}" != None ] ; then
-	                export TF_VAR_${tfvars[i]}=${input_args[i+4]}
-	        fi
+		if [ "${input_args[i+4]}" != None ] ; then
+			export TF_VAR_${tfvars[i]}=${input_args[i+4]}
+		fi
 	done
 		
 }
@@ -52,8 +52,8 @@ export NETDATA_API_KEY=$(uuidgen)
 export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
 ansible() {
-        export ANSIBLE_HOST_KEY_CHECKING=False
-        ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
+	export ANSIBLE_HOST_KEY_CHECKING=False
+	ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
 		${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e '@../vars.yml' --limit spark_${1} \
 		> ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
 }

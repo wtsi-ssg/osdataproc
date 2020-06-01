@@ -15,6 +15,6 @@ spark.eventLog.dir               hdfs:///shared/spark-logs
 spark.ui.reverseProxy            true
 spark.ui.reverseProxyUrl         http://{{ spark_master_private_ip }}/spark
 
-{% for key, value in sparkConfig.items() %}
+{% for key, value in spark_config.items() %}
 {{ "%-33s%s" | format(key, value) }}
 {% endfor %}
