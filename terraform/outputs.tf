@@ -1,5 +1,5 @@
-output "spark_slave_private_ips" {
-  value = openstack_compute_instance_v2.spark_slave.*.network.0.fixed_ip_v4
+output "spark_worker_private_ips" {
+  value = openstack_compute_instance_v2.spark_worker.*.network.0.fixed_ip_v4
   // sensitive to stop unnecessary CLI output, but still parsable in created outputs.json file
   sensitive = true
 }

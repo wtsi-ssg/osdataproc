@@ -156,7 +156,7 @@ jobs:
   - name: namenode
     url: http://{{ spark_master_private_ip }}:9870/jmx
 
-{% for ip in spark_slave_private_ips %}
+{% for ip in spark_worker_private_ips %}
   - name: datanode{{ loop.index }}
     url: http://{{ ip }}:9864/jmx
 

@@ -188,14 +188,14 @@ http {
           proxy_redirect http://spark-master:19888/ http://{{ spark_master_public_ip }}/mapreduce/;
     
     
-          subs_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'src="http://{{ spark_master_public_ip }}/nm$1' ir;
-          subs_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'href="http://{{ spark_master_public_ip }}/nm$1' ir;
-          subs_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'href=\'http://{{ spark_master_public_ip }}/nm$1' ir;
-          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042/' 'http://{{ spark_master_public_ip }}/nm$1/' ir;
-          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'src="http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'href="http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'href=\'http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042/' 'http://{{ spark_master_public_ip }}/nm$1/' ir;
+          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'http://{{ spark_master_public_ip }}/nm$1' ir;
     
-          {% for ip in spark_slave_private_ips %}
-          proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+          {% for ip in spark_worker_private_ips %}
+          proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
           {% endfor %}
     
           sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/yarn/';
@@ -237,14 +237,14 @@ http {
           sub_filter 'http://spark-master:19888' 'http://{{ spark_master_public_ip }}/mapreduce';
           proxy_redirect http://spark-master:19888/ http://{{ spark_master_public_ip }}/mapreduce/;
     
-          subs_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'src="http://{{ spark_master_public_ip }}/nm$1' ir;
-          subs_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'href="http://{{ spark_master_public_ip }}/nm$1' ir;
-          subs_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'href=\'http://{{ spark_master_public_ip }}/nm$1' ir;
-          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042/' 'http://{{ spark_master_public_ip }}/nm$1/' ir;
-          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-(\d*):8042' 'http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'src="http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'href="http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'href=\'http://{{ spark_master_public_ip }}/nm$1' ir;
+          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042/' 'http://{{ spark_master_public_ip }}/nm$1/' ir;
+          subs_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-(\d*):8042' 'http://{{ spark_master_public_ip }}/nm$1' ir;
     
-          {% for ip in spark_slave_private_ips %}
-          proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+          {% for ip in spark_worker_private_ips %}
+          proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
           {% endfor %}
     
           sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/mapreduce/';
@@ -254,7 +254,7 @@ http {
           sub_filter_once off;
       }
       
-      {% for ip in spark_slave_private_ips %}
+      {% for ip in spark_worker_private_ips %}
       
       location ~ ^/nm{{ "%02d"|format(loop.index) }}$ {
           return 301 http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
@@ -281,12 +281,12 @@ http {
           sub_filter 'http://spark-master:8088' 'http://{{ spark_master_public_ip }}/yarn';
           proxy_redirect http://spark-master:8088/ http://{{ spark_master_public_ip }}/yarn/;
     
-          sub_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
-          sub_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
-          sub_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'href=\'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
-          sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
-          sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
-          proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-slave-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
+          sub_filter 'src="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+          sub_filter 'href="//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+          sub_filter 'href=\'//{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042' 'href=\'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+          sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042/' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/';
+          sub_filter 'http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042' 'http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
+          proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:8042/ http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}/;
     
           sub_filter 'src="//{{ ip }}:8042' 'src="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';
           sub_filter 'href="//{{ ip }}:8042' 'href="http://{{ spark_master_public_ip }}/nm{{ "%02d"|format(loop.index) }}';

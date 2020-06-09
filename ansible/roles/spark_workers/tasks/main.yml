@@ -11,10 +11,10 @@
           keep_newer: yes
           remote_src: yes
 
-- name: Start Spark slave
-  service: name=spark-slave state=started enabled=yes
+- name: Start Spark worker
+  service: name=spark-worker state=started enabled=yes
 
-  # virtualenv python needs to be present on all slave nodes, so create it here
+  # virtualenv python needs to be present on all worker nodes, so create it here
 - name: Create virtualenv
   become: yes
   become_user: "{{ spark_user }}"

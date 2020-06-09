@@ -10,7 +10,7 @@
           - include_role:
                   name: spark_master
 
-- hosts: spark_slaves,localhost
+- hosts: spark_workers,localhost
   become: true
   gather_facts: no
   tasks:
@@ -18,4 +18,4 @@
             wait_for_connection:
 
           - include_role:
-                  name: spark_slaves
+                  name: spark_workers

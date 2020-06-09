@@ -54,7 +54,7 @@ def cli():
     parser_create = subparsers.add_parser('create', help='create a Spark cluster')
 
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
-    parser_create.add_argument('-n', '--num-slaves', type=int, help='number of slave nodes')
+    parser_create.add_argument('-n', '--num-workers', type=int, help='number of worker nodes')
     parser_create.add_argument('-p', '--public-key', help='path to public key file')
     parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
     parser_create.add_argument('--network-name', help='OpenStack network to use')
@@ -71,7 +71,7 @@ def cli():
     parser_destroy.add_argument('-d', '--destroy-volumes', dest='destroy-volumes', action='store_true', help='also destroy volumes attached to cluster')
     parser_destroy.set_defaults(func=destroy)
 
-    parser_reboot = subparsers.add_parser('reboot', help='reboot all slave nodes of a cluster, e.g. to pick up mount point changes')
+    parser_reboot = subparsers.add_parser('reboot', help='reboot all worker nodes of a cluster, e.g. to pick up mount point changes')
     parser_reboot.add_argument('cluster-name', help='name of the cluster to reboot')
     parser_reboot.set_defaults(func=reboot)
 

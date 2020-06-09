@@ -1,4 +1,4 @@
-variable "slaves" {
+variable "workers" {
   default = 2
 }
 

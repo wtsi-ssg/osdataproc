@@ -52,12 +52,12 @@ resource "openstack_networking_secgroup_rule_v2" "spark_master_https_in" {
   security_group_id = openstack_networking_secgroup_v2.spark_master.id
 }
 
-resource "openstack_networking_secgroup_rule_v2" "spark_master_slave_in" {
+resource "openstack_networking_secgroup_rule_v2" "spark_master_worker_in" {
   direction         = "ingress"
   ethertype         = "IPv4"
-  description       = "Allows inbound connections from any slave node"
+  description       = "Allows inbound connections from any worker node"
   protocol          = "tcp"
-  remote_group_id   = openstack_networking_secgroup_v2.spark_slave.id
+  remote_group_id   = openstack_networking_secgroup_v2.spark_worker.id
   security_group_id = openstack_networking_secgroup_v2.spark_master.id
 }
 

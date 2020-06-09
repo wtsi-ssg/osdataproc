@@ -2,7 +2,7 @@
 ### Default osdataproc configuration
 osdataproc:
   cluster-name:
-  num_slaves: 2
+  num_workers: 2
   ## Path to public key file
   public_key: ~/.ssh/id_rsa.pub
   flavor: m1.medium

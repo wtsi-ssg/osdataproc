@@ -15,10 +15,10 @@ fi
 
 if ! grep -Eq "spark-master$" /etc/hosts ; then
     echo ${spark_master_private_ip} spark-master >> /etc/hosts
-    for i in {1..${slaves}} ; do
+    for i in {1..${workers}} ; do
         val=$(printf "%02d" $i)
-        nextname=$(echo ${user}-${cluster}-slave-$val)
-        nextip=$(echo ${slave_ips} | sed 's/[][]//g' | cut -d',' -f$i)
+        nextname=$(echo ${user}-${cluster}-worker-$val)
+        nextip=$(echo ${worker_ips} | sed 's/[][]//g' | cut -d',' -f$i)
         tee <<-EOF>>/etc/hosts
 $nextip $nextname
 EOF
