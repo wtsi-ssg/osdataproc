@@ -59,6 +59,11 @@
     - partition_info.partitions != []
     - partition_info.partitions[0].name == "osdataproc"
 
+- name: Wait for device
+  wait_for:
+    path: "{{ device_name }}"
+    state: present
+
 - name: Ensure that a filesystem is created on the data volume
   filesystem:
     dev: "{{ device_name }}"

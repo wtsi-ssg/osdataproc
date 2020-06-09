@@ -15,3 +15,9 @@ You may also wish to attach an existing volume to your cluster. To do this speci
 ### Destroying a volume
 
 To destroy volumes attached to the cluster use the `--destroy-volumes` flag. Not specifying this will keep the data on the volume for when a cluster is recreated.
+
+### Troubleshooting
+
+If you enter an incorrect password on cluster creation the cluster will not become fully configured. If the provisioning logs become stuck on 'Wait for device' this is a sign that the password is incorrect. You can correct this by connecting to the master node and running `sudo systemd-tty-ask-password-agent`, entering the correct password for your volume when prompted.
+
+Check the progress of your cluster provisioning from your home computer in the `state/<cluster-name>/ansible-master.log` file.
