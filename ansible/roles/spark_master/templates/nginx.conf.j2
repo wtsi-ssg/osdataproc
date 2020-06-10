@@ -30,6 +30,10 @@ http {
     keepalive_timeout  65;
 
     #gzip  on;
+    
+    map $http_referer $ref {
+        ~*/(hdfs|dn(\d*))/*       "http://{{ spark_master_public_ip }}/$1$request_uri";
+    }
 
     server {
       listen 443 ssl;
@@ -323,39 +327,75 @@ http {
           proxy_pass http://$target:9870$uri$is_args$args;
           proxy_set_header Accept-Encoding '';
     
+          {% for ip in spark_worker_private_ips %}
+          proxy_redirect http://{{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}:9864/ http://{{ spark_master_public_ip }}/dn{{ "%02d"|format(loop.index) }}/;
+          {% endfor %}
+
           sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/hdfs/';
           sub_filter 'href="/' 'href="http://{{ spark_master_public_ip }}/hdfs/';
     
           sub_filter_once off;
       }
+
+      {% for ip in spark_worker_private_ips %}
+
+      location ~ ^/dn{{ "%02d"|format(loop.index) }}$ {
+          auth_basic off;
+          return 301 http://{{ spark_master_public_ip }}/dn{{ "%02d"|format(loop.index) }}/;
+      }
+
+      location ~ ^/dn{{ "%02d"|format(loop.index) }}/static/(.*)\.min\.js$ {
+          auth_basic off;
+          set $target {{ ip }};
+          rewrite ^/dn{{ "%02d"|format(loop.index) }}(.*)$ $1 break;
+
+          proxy_pass http://$target:9864$uri$is_args$args;
+      }
+
+      location ~ ^/dn{{ "%02d"|format(loop.index) }}/(.*)?$ {
+          auth_basic off;
+          set $target {{ ip }};
+          rewrite ^/dn{{ "%02d"|format(loop.index) }}(.*)$ $1 break;
+
+          proxy_pass http://$target:9864$uri$is_args$args;
+          proxy_set_header Accept-Encoding '';
+
+          sub_filter 'src="/' 'src="http://{{ spark_master_public_ip }}/dn{{ "%02d"|format(loop.index) }}/';
+          sub_filter 'href="/' 'href="http://{{ spark_master_public_ip }}/dn{{ "%02d"|format(loop.index) }}/';
+          sub_filter 'href=\'/' 'href=\'http://{{ spark_master_public_ip }}/dn{{ "%02d"|format(loop.index) }}/';
+
+          sub_filter_once off;
+      }
+
+      {% endfor %}
     
       location /jmx {
-          proxy_pass http://localhost:9870/jmx;
           proxy_set_header Accept-Encoding "";
           proxy_pass_request_headers on;
           proxy_set_header Connection "keep-alive";
+          proxy_pass $ref;
       }
     
       location /webhdfs/ {
-          proxy_pass http://localhost:9870/webhdfs/;
           proxy_set_header Accept-Encoding "";
           proxy_pass_request_headers on;
           proxy_set_header Connection "keep-alive";
+          proxy_pass http://{{ spark_master_public_ip }}/hdfs/webhdfs/;
       }
     
       location /startupProgress {
-          proxy_pass http://localhost:9870/startupProgress;
           proxy_set_header Accept-Encoding "";
           proxy_pass_request_headers on;
           proxy_set_header Connection "keep-alive";
+          proxy_pass http://localhost:9870/startupProgress;
       }
     
       location /conf {
-          proxy_pass http://localhost:9870/conf;
           proxy_set_header Accept-Encoding "";
           proxy_pass_request_headers on;
           proxy_set_header Connection "keep-alive";
+          proxy_pass http://localhost:9870/conf;
       }
-    
+
     }
 }
