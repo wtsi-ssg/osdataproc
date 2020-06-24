@@ -60,8 +60,11 @@ def cli():
     parser_create.add_argument('--network-name', help='OpenStack network to use')
     parser_create.add_argument('-i', '--image-name', help='OpenStack image to use - Ubuntu only')
     parser_create.add_argument('-v', '--nfs-volume', help='Name or ID of an nfs volume to attach to the cluster') 
-    parser_create.add_argument('-s', '--volume-size', help='Size of OpenStack volume to create')
-    parser_create.add_argument('-d', '--device-name', help='Device mountpoint name of volume - see NFS.md')
+
+    volume_create = parser_create.add_mutually_exclusive_group()
+    volume_create.add_argument('-s', '--volume-size', help='Size of OpenStack volume to create')
+    volume_create.add_argument('-d', '--device-name', help='Device mountpoint name of volume - see NFS.md')
+
     parser_create.add_argument('--floating-ip', help='OpenStack floating IP to associate to the master node - will automatically create one if not specified')
     parser_create.set_defaults(func=create)
 
@@ -70,6 +73,7 @@ def cli():
     parser_destroy.add_argument('cluster-name', help='name of the cluster to destroy')
     parser_destroy.add_argument('-d', '--destroy-volumes', dest='destroy-volumes', action='store_true', help='also destroy volumes attached to cluster')
     parser_destroy.set_defaults(func=destroy)
+
 
     parser_reboot = subparsers.add_parser('reboot', help='reboot all worker nodes of a cluster, e.g. to pick up mount point changes')
     parser_reboot.add_argument('cluster-name', help='name of the cluster to reboot')
