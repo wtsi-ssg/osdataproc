@@ -9,14 +9,18 @@ osdataproc:
   network_name: cloudforms_network
   image_name: bionic-server
   nfs_volume:
+  ## NOTE: volume_size and device_name are mutually exclusive command line
+  #  arguments. If volume_size is specified here, device_name MUST be /dev/mapper/osdataproc
   volume_size:
-  ## Mountpoint of volume, default is /dev/mapper/osdataproc. Change if using pre-created volume (e.g. /dev/mapper/hail-tmp_dir for volumes created with https://github.com/wtsi-hgi/hgi-cloud, or /dev/vdb1)
+  ## Mountpoint of volume, default is /dev/mapper/osdataproc. Change if using 
+  #  pre-created volume (e.g. /dev/mapper/hail-tmp_dir for volumes created with 
+  #  https://github.com/wtsi-hgi/hgi-cloud, or /dev/vdb1)
   device_name: /dev/mapper/osdataproc
   ## Floating IP must already be in pool, otherwise leave blank for new one to be allocated
   floating_ip:
 
 ###############################################################################
-### Default software versions
+## Default software versions
 hadoop_version: 3.2.1
 spark_version: 2.4.5
 hail_version: 0.2.41
@@ -28,7 +32,8 @@ extra_pkgs:
 extra_python_modules:
 
 ###############################################################################
-### Default hadoop configuration. Full configuration options at bottom of https://hadoop.apache.org/docs/current/
+## Default hadoop configuration. Full configuration options at bottom of 
+#   https://hadoop.apache.org/docs/current/
 hadoop_config:
   core_site:
     fs.s3a.access.key:
@@ -45,7 +50,8 @@ hadoop_config:
 
 
 ###############################################################################
-### Default spark configuration. Add extra options as available at https://spark.apache.org/docs/latest/configuration.html
+## Default spark configuration. Add extra options as available at 
+#  https://spark.apache.org/docs/latest/configuration.html
 spark_config:
   ## Remove spark.serializer and spark.kryo.registrator when not using Hail
   spark.serializer: org.apache.spark.serializer.KryoSerializer
