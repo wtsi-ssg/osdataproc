@@ -69,18 +69,14 @@
           - health.d
 
 - name: Create netdata hdfs.conf file
-  template: src=netdata/hdfs.conf.j2 dest=/etc/netdata/go.d/hdfs.conf
-  mode: 0644
+  template: src=netdata/hdfs.conf.j2 dest=/etc/netdata/go.d/hdfs.conf mode=0644
   tags: master
 
 - name: Create netdata stream.conf file
-  template: src=netdata/stream.conf.j2 dest=/etc/netdata/stream.conf
-  mode: 0644
+  template: src=netdata/stream.conf.j2 dest=/etc/netdata/stream.conf mode=0644
 
 - name: Create netdata health.hdfs.conf file
-  template: src=netdata/health.hdfs.conf.j2 dest=/etc/netdata/health.d/hdfs.conf
-  mode: 0644
+  template: src=netdata/health.hdfs.conf.j2 dest=/etc/netdata/health.d/hdfs.conf mode=0644
 
 - name: Create netdata health_alarm_notify.conf file
-  template: src=netdata/health_alarm_notify.conf.j2 dest=/etc/netdata/health_alarm_notify.conf
-  mode: 0644
+  template: src=netdata/health_alarm_notify.conf.j2 dest=/etc/netdata/health_alarm_notify.conf mode=0644
