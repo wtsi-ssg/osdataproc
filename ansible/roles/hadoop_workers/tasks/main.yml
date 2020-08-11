@@ -19,7 +19,7 @@
 - name: Extract Hadoop distribution
   become: yes
   unarchive:
-          src: "{{ hadoop_download_dir }}/hadoop-{{ hadoop_version }}.tar.gz"
+          src: "{{ hadoop_download_dir }}/hadoop.tar.gz"
           dest: "{{ hadoop_install_dir }}"
           owner: "{{ hadoop_user }}"
           group: "{{ hadoop_group }}"

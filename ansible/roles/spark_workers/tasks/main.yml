@@ -3,7 +3,7 @@
 - name: Extract Spark distribution
   become: yes
   unarchive:
-          src: "{{ spark_download_dir }}/spark-{{ spark_version }}.tgz"
+          src: "{{ spark_download_dir }}/spark.tgz"
           dest: "{{ spark_install_dir }}"
           owner: "{{ spark_user }}"
           group: "{{ spark_group }}"
