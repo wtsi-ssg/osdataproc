@@ -310,7 +310,7 @@ http {
       {% endfor %}
       
       location ~ ^/hdfs$ {
-          return 301 http://{{ spark_master_public_ip }}/hdfs/;
+          return 301 http://{{ spark_master_public_ip }}/hdfs/dfshealth.html;
       }
     
       location ~ ^/hdfs/static/(.*)\.min\.js$ {
