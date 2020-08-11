@@ -142,7 +142,7 @@
   git:
           repo: https://github.com/netdata/netdata.git
           dest: "{{ netdata_dir }}"
-          version: master
+          version: "{{ netdata_version }}"
           depth: 1
 
 - name: Install extra system packages

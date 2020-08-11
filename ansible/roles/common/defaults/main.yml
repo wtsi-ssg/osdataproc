@@ -23,6 +23,7 @@ python_pkgs:
         - python3-pip
         - python3-passlib
 
+netdata_version: v1.23.2
 netdata_pkgs: 
         - zlib1g-dev
         - uuid-dev
