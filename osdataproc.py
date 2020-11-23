@@ -42,8 +42,14 @@ def act(args, command):
 def get_args(args, command):
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = [f'{osdataproc_home}/run', command]
+
+    # FIXME The order in which the keys are iterated through matters to
+    # the downstream "run" script, which uses positional arguments. It's
+    # not clear whether this loop is deterministic, or what happens when
+    # a new option is added
     for key in args:
         run_args.append(str(args[key]))
+
     return run_args
 
 def cli():
@@ -58,6 +64,7 @@ def cli():
     parser_create.add_argument('-p', '--public-key', help='path to public key file')
     parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
     parser_create.add_argument('--network-name', help='OpenStack network to use')
+    parser_create.add_argument('--lustre-network', help='OpenStack Secure Lustre network to use')
     parser_create.add_argument('-i', '--image-name', help='OpenStack image to use - Ubuntu only')
     parser_create.add_argument('-v', '--nfs-volume', help='Name or ID of an nfs volume to attach to the cluster') 
 

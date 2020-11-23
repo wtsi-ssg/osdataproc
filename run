@@ -36,7 +36,7 @@ get_apply_vars () {
 		exit 1
 	fi
 	
-	tfvars=(flavor_name network_name image_name nfs_volume volume_size device_name spark_master_public_ip)
+	tfvars=(flavor_name network_name image_name nfs_volume volume_size device_name spark_master_public_ip lustre_network)
 	# Update tfvars variables if set, otherwise use defaults
 	for i in "${!tfvars[@]}" ; do
 		if [ "${input_args[i+4]}" != None ] ; then

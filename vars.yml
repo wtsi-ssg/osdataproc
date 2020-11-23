@@ -7,6 +7,7 @@ osdataproc:
   public_key: ~/.ssh/id_rsa.pub
   flavor: m1.medium
   network_name: cloudforms_network
+  lustre_network:
   image_name: bionic-server
   nfs_volume:
   ## NOTE: volume_size and device_name are mutually exclusive command line
