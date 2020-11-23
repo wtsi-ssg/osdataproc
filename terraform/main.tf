@@ -1,8 +1,17 @@
+locals {
+  name_prefix = "${var.os_user_name}-${var.cluster_name}"
+}
+
 provider "openstack" {
   user_name   = var.os_user_name
   tenant_name = var.os_tenant_name
   password    = var.os_password
   auth_url    = var.os_auth_url
+}
+
+module "security_groups" {
+  source = "./security-groups"
+  name   = local.name_prefix
 }
 
 // if user specifies public ip (spark_master_public_ip="x.x.x.x")
