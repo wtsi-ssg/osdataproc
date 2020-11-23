@@ -1,3 +1,10 @@
+provider "openstack" {
+  user_name   = var.os_user_name
+  tenant_name = var.os_tenant_name
+  password    = var.os_password
+  auth_url    = var.os_auth_url
+}
+
 // if user specifies public ip (spark_master_public_ip="x.x.x.x")
 // then do not create a new one
 resource "openstack_networking_floatingip_v2" "public_ip" {
@@ -22,3 +29,7 @@ data "openstack_networking_network_v2" "network_id" {
   name = var.network_name
 }
 
+data "openstack_networking_network_v2" "lustre_network_id" {
+  count = var.lustre_network == "" ? 0 : 1
+  name  = var.lustre_network
+}

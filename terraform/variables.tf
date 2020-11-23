@@ -6,6 +6,10 @@ variable "network_name" {
   default = "cloudforms_network"
 }
 
+variable "lustre_network" {
+  default = ""
+}
+
 variable "image_name" {
   default = "bionic-server"
 }
