@@ -7,38 +7,37 @@ export TF_VAR_username=$OS_USERNAME
 
 # Runs on terraform apply error - delete created resources
 cleanup () {
-	echo "ERROR: Only partial configuration could complete. Cleaning up created resources..."
-	sleep 3
-	cd ${OSDP_HOME}/terraform
-	export TF_WARN_OUTPUT_ERRORS=1 # Destroy even if output variables do not evaluate
-	terraform workspace \select $TF_VAR_cluster_name && \
-	terraform destroy -auto-approve && \
-	terraform workspace \select default && \
-	terraform workspace delete $TF_VAR_cluster_name
-	echo "Tidy up complete. Please try again. Check that enough resources exist."
+  echo "ERROR: Only partial configuration could complete. Cleaning up created resources..."
+  sleep 3
+  cd ${OSDP_HOME}/terraform
+  export TF_WARN_OUTPUT_ERRORS=1 # Destroy even if output variables do not evaluate
+  terraform workspace select $TF_VAR_cluster_name && \
+  terraform destroy -auto-approve && \
+  terraform workspace select default && \
+  terraform workspace delete $TF_VAR_cluster_name
+  echo "Tidy up complete. Please try again. Check that enough resources exist."
 }
 
 get_apply_vars () {
-	input_args=($@)
-	if [[ ${3} =~ ^[0-9]+$ ]] ; then
-		export TF_VAR_workers=$((${3}))
-	fi
-	keyfile="${4/#\~/$HOME}" # expand tilde to $HOME
-	if [[ -f ${keyfile} ]] ; then
-		export TF_VAR_identity_file=$(< ${keyfile})
-	else
-		echo "The file could not be found. Please enter a valid path to a public key."
-		exit 1
-	fi
-	
-	tfvars=(flavor_name network_name lustre_network image_name nfs_volume volume_size device_name spark_master_public_ip)
-	# Update tfvars variables if set, otherwise use defaults
-	for i in "${!tfvars[@]}" ; do
-		if [ "${input_args[i+4]}" != None ] ; then
-			export TF_VAR_${tfvars[i]}=${input_args[i+4]}
-		fi
-	done
-		
+  input_args=($@)
+  if [[ ${3} =~ ^[0-9]+$ ]] ; then
+    export TF_VAR_workers=$((${3}))
+  fi
+  keyfile="${4/#\~/$HOME}" # expand tilde to $HOME
+  if [[ -f ${keyfile} ]] ; then
+    export TF_VAR_identity_file=$(< ${keyfile})
+  else
+    echo "The file could not be found. Please enter a valid path to a public key."
+    exit 1
+  fi
+
+  tfvars=(flavor_name network_name lustre_network image_name nfs_volume volume_size device_name spark_master_public_ip)
+  # Update tfvars variables if set, otherwise use defaults
+  for i in "${!tfvars[@]}" ; do
+    if [ "${input_args[i+4]}" != None ] ; then
+      export TF_VAR_${tfvars[i]}=${input_args[i+4]}
+    fi
+  done
 }
 
 export TF_VAR_cluster_name=${2}
@@ -47,64 +46,64 @@ export NETDATA_API_KEY=$(uuidgen)
 export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
 ansible() {
-	export ANSIBLE_HOST_KEY_CHECKING=False
-	ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
-		${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e '@../vars.yml' --limit spark_${1} \
-		> ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
+  export ANSIBLE_HOST_KEY_CHECKING=False
+  ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
+    ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e '@../vars.yml' --limit spark_${1} \
+    > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
 }
 
 cd ${OSDP_HOME}/terraform
 case ${1} in
-	init)
-		terraform init -input=false
-		;;
-	apply)
-		trap cleanup ERR
-		get_apply_vars $@
-		echo "Password for web authentication and encrypted volume: "
-		read -sr PASSWORD
-		export PASSWORD=$PASSWORD
-	       	terraform workspace \select ${2} || terraform workspace new ${2}
-		terraform plan -out="terraform.tfstate.d/${2}/plan" -input=false
-		terraform apply -input=false "terraform.tfstate.d/${2}/plan"
-		terraform output -json > terraform.tfstate.d/${2}/outputs.json
-		echo "Running provisioning software. This will take a few minutes."
-	       	echo "Check logs at osdataproc/state/${2}/ansible-master.log"
-		ansible "master" & 
-		exit 0
-		;;
-	destroy)
-		if ! terraform workspace \select ${2} ; then
-			echo "Cluster not found"
-		else
-			terraform workspace \select ${2}
-			export TF_VAR_network_name=$(terraform show -json terraform.tfstate.d/${2}/terraform.tfstate \
-			| python3 -c "import sys, json; print(json.load(sys.stdin)['values']['root_module']['resources'][0]['values']['name'])")
-			terraform destroy
-			terraform workspace \select default
-			terraform workspace delete ${2}
-		fi
-		exit 0
-		;;
-	reboot)
-		nodes=${OS_USERNAME}-${2}-worker
-		if ! terraform workspace \select ${2} ; then
-			echo "Cluster not found"
-		else
-			echo "Nodes to reboot: "
-			nova list | grep ${nodes} | cut -d '|' -f 3
-			read -p "Are you sure you want to reboot all ${nodes} nodes? (y/n) " -n 1 -r
-			echo
-			if [[ $REPLY =~ ^[Yy]$ ]] ; then
-				echo "Rebooting worker nodes..."
-				nova list | grep ${nodes} | cut -d '|' -f 2 | xargs nova reboot
-			else
-				echo "Reboot cancelled"
-			fi
-		fi
-		exit 0
-		;;
-	*)
-		exit 1
-		;;
+  init)
+    terraform init -input=false
+    ;;
+  apply)
+    trap cleanup ERR
+    get_apply_vars $@
+    echo "Password for web authentication and encrypted volume: "
+    read -sr PASSWORD
+    export PASSWORD=$PASSWORD
+    terraform workspace select ${2} || terraform workspace new ${2}
+    terraform plan -out="terraform.tfstate.d/${2}/plan" -input=false
+    terraform apply -input=false "terraform.tfstate.d/${2}/plan"
+    terraform output -json > terraform.tfstate.d/${2}/outputs.json
+    echo "Running provisioning software. This will take a few minutes."
+          echo "Check logs at osdataproc/state/${2}/ansible-master.log"
+    ansible "master" & 
+    exit 0
+    ;;
+  destroy)
+    if ! terraform workspace select ${2} ; then
+      echo "Cluster not found"
+    else
+      terraform workspace select ${2}
+      export TF_VAR_network_name=$(terraform show -json terraform.tfstate.d/${2}/terraform.tfstate \
+      | jq -r '.values.root_module.child_modules[] | select(.address == "modules.networking") .resources | select(.address == "module.networking.data.openstack_networking_network_v2.network_id") .values.name')
+      terraform destroy
+      terraform workspace select default
+      terraform workspace delete ${2}
+    fi
+    exit 0
+    ;;
+  reboot)
+    nodes=${OS_USERNAME}-${2}-worker
+    if ! terraform workspace select ${2} ; then
+      echo "Cluster not found"
+    else
+      echo "Nodes to reboot: "
+      nova list | grep ${nodes} | cut -d '|' -f 3
+      read -p "Are you sure you want to reboot all ${nodes} nodes? (y/n) " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]] ; then
+        echo "Rebooting worker nodes..."
+        nova list | grep ${nodes} | cut -d '|' -f 2 | xargs nova reboot
+      else
+        echo "Reboot cancelled"
+      fi
+    fi
+    exit 0
+    ;;
+  *)
+    exit 1
+    ;;
 esac
