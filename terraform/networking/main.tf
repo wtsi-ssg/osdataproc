@@ -7,7 +7,7 @@ data "openstack_networking_network_v2" "network_id" {
 }
 
 data "openstack_networking_network_v2" "lustre_network_id" {
-  count = locals.with_lustre ? 1 : 0
+  count = local.with_lustre ? 1 : 0
   name  = var.lustre_network
 }
 
@@ -16,7 +16,7 @@ resource "openstack_networking_floatingip_v2" "floating_ip" {
   count       = local.create_ip ? 1 : 0
   address     = var.floating_ip
   description = "${var.identifier}-ip"
-  pool        = openstack_networking_network_v2.external.name
+  pool        = data.openstack_networking_network_v2.external.name
 }
 
 # Master port
@@ -38,5 +38,5 @@ resource "openstack_networking_port_v2" "worker" {
 resource "openstack_networking_port_v2" "lustre" {
   count      = local.with_lustre ? var.workers + 1 : 0
   name       = format("${var.identifier}-lustre-port-%02d", count.index + 1)
-  network_id = data.openstack_networking_network_v2.lustre_network_id.id
+  network_id = data.openstack_networking_network_v2.lustre_network_id[0].id
 }
