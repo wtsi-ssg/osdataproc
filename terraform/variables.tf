@@ -47,4 +47,5 @@ variable "netdata_api_key" {
 
 locals {
   name_prefix = "${var.username}-${var.cluster_name}"
+  with_lustre = var.lustre_network != ""
 }

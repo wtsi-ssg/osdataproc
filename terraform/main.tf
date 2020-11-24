@@ -28,7 +28,10 @@ resource "openstack_compute_instance_v2" "spark_master" {
   image_name  = var.image_name
   flavor_name = var.flavor_name
   key_pair    = openstack_compute_keypair_v2.spark_keypair.id
-  network     = module.networking.master_network
+
+  network {
+    port = module.networking.master_port
+  }
 
   # NOTE This writes out the Ansible host inventory... We can probably
   # do this with the local provider...
@@ -59,7 +62,6 @@ resource "openstack_compute_instance_v2" "spark_worker" {
   image_name  = var.image_name
   flavor_name = var.flavor_name
   key_pair    = openstack_compute_keypair_v2.spark_keypair.id
-  network     = module.networking.worker_network[count.index]
   user_data   = templatefile("user_data.sh.tpl", {
                   spark_master_private_ip = openstack_compute_instance_v2.spark_master.access_ip_v4,
                   user                    = var.username,
@@ -69,4 +71,17 @@ resource "openstack_compute_instance_v2" "spark_worker" {
                   netdata_api_key         = var.netdata_api_key,
                   nfs_volume              = var.nfs_volume
                 })
+
+  network {
+    port = module.networking.worker_ports[count.index]
+  }
+}
+
+# Attach Lustre provider network, if necessary
+
+resource "openstack_compute_interface_attach_v2" "lustre" {
+  count = local.with_lustre ? var.workers + 1 : 0
+
+  instance_id = concat([openstack_compute_instance_v2.spark_master.id], openstack_compute_instance_v2.spark_worker[*].id)[count.index]
+  port_id     = module.networking.lustre_ports[count.index]
 }
