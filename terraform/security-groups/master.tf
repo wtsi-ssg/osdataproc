@@ -1,5 +1,5 @@
 resource "openstack_networking_secgroup_v2" "master" {
-  name = "${var.name}-master"
+  name = "${var.identifier}-master"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "spark_master_ssh" {

@@ -3,12 +3,7 @@ set -e
 OSDP_HOME=$(dirname "$0")
 
 export TF_IN_AUTOMATION=1 # Limit Terraform output
-export TF_VAR_os_user_name=$OS_USERNAME
-export TF_VAR_os_tenant_name=$OS_PROJECT_NAME
-export TF_VAR_os_password=$OS_PASSWORD
-export TF_VAR_os_auth_url=$OS_AUTH_URL
-export TF_VAR_os_region_name=$OS_REGION_NAME
-export TF_VAR_os_interface=$OS_INTERFACE
+export TF_VAR_username=$OS_USERNAME
 
 # Runs on terraform apply error - delete created resources
 cleanup () {

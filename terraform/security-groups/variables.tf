@@ -1,4 +1,4 @@
-variable "name" {
+variable "identifier" {
   type        = string
-  description = "Cluster name"
+  description = "Identifier prefix"
 }

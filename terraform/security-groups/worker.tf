@@ -1,5 +1,5 @@
 resource "openstack_networking_secgroup_v2" "worker" {
-  name = "${var.name}-worker"
+  name = "${var.identifier}-worker"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "spark_worker_master_in" {
