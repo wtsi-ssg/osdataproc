@@ -11,7 +11,7 @@ output "lustre_ports" {
 }
 
 output "worker_ips" {
-  value = openstack_networking_port_v2.worker[*].all_fixed_ips
+  value = flatten(openstack_networking_port_v2.worker[*].all_fixed_ips)
 }
 
 output "floating_ip" {

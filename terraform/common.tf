@@ -1,4 +1,6 @@
 provider "openstack" {}
+provider "local" {}
+provider "cloudinit" {}
 
 module "security_groups" {
   source     = "./security-groups"

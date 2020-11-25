@@ -7,12 +7,6 @@ resource "openstack_compute_instance_v2" "spark_master" {
   network {
     port = module.networking.master_port
   }
-
-  # NOTE This writes out the Ansible host inventory... We can probably
-  # do this with the local provider...
-  provisioner "local-exec" {
-    command = "echo '[spark_master]\nubuntu@${module.networking.floating_ip}' > terraform.tfstate.d/${var.cluster_name}/hosts_master"
-  }
 }
 
 resource "openstack_compute_volume_attach_v2" "spark_volume" {
