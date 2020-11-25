@@ -4,6 +4,11 @@ OSDP_HOME=$(dirname "$0")
 
 export TF_IN_AUTOMATION=1 # Limit Terraform output
 export TF_VAR_username=$OS_USERNAME
+export TF_VAR_cluster_name=${2}
+# generate API key for netdata
+export NETDATA_API_KEY=$(uuidgen)
+export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
+export CLUSTER_PREFIX="${OS_USERNAME}-${TF_VAR_cluster_name}"
 
 # Runs on terraform apply error - delete created resources
 cleanup () {
@@ -39,11 +44,6 @@ get_apply_vars () {
     fi
   done
 }
-
-export TF_VAR_cluster_name=${2}
-# generate API key for netdata
-export NETDATA_API_KEY=$(uuidgen)
-export TF_VAR_netdata_api_key=${NETDATA_API_KEY}
 
 ansible() {
   export ANSIBLE_HOST_KEY_CHECKING=False
