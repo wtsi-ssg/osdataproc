@@ -4,7 +4,15 @@ resource "local_file" "ansible_inventory" {
   content         = templatefile("ansible-inventory.tpl", {master_ip = module.networking.floating_ip})
 }
 
-# TODO Generate TF vars for clean cluster destruction
+resource "local_file" "destroy_variables" {
+  filename        = "${path.root}/terraform.tfstate.d/${var.cluster_name}/destroy.tfvars"
+  file_permission = "0644"
+  content         = templatefile("destroy.tfvars.tpl", {
+    network_name   = var.network_name,
+    lustre_network = var.lustre_network,
+    master_ip      = module.networking.floating_ip
+  })
+}
 
 output "spark_worker_private_ips" {
   value     = module.networking.worker_ips

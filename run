@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# FIXME This script leaves a lot to be desired! Rather than rewrite it,
+# it may be easier to incorporate into the osdataproc Python CLI...
+
 set -e
 OSDP_HOME=$(dirname "$0")
 
@@ -47,9 +51,13 @@ get_apply_vars () {
 
 ansible() {
   export ANSIBLE_HOST_KEY_CHECKING=False
-  ansible-playbook -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
-    ${OSDP_HOME}/ansible/main.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e '@../vars.yml' --limit spark_${1} \
-    > ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log 2>&1
+  ansible-playbook ${OSDP_HOME}/ansible/main.yml \
+                   -i ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/hosts_${1} \
+                   -e 'ansible_python_interpreter=/usr/bin/python3' \
+                   -e '@../vars.yml' \
+                   --limit spark_${1} \
+                   2>&1 \
+  | tee ${OSDP_HOME}/terraform/terraform.tfstate.d/${TF_VAR_cluster_name}/ansible-${1}.log
 }
 
 cd ${OSDP_HOME}/terraform
@@ -75,9 +83,7 @@ case ${1} in
       echo "Cluster not found"
     else
       terraform workspace select ${2}
-      export TF_VAR_network_name=$(terraform show -json terraform.tfstate.d/${2}/terraform.tfstate \
-      | jq -r '.values.root_module.child_modules[] | select(.address == "modules.networking") .resources | select(.address == "module.networking.data.openstack_networking_network_v2.network_id") .values.name')
-      terraform destroy
+      terraform destroy -var-file=terraform.tfstate.d/${2}/destroy.tfvars
       terraform workspace select default
       terraform workspace delete ${2}
     fi
