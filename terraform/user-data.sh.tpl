@@ -5,7 +5,7 @@ exec >>/var/log/user_data.log 2>&1
 # Re-run user_data on reboot
 rm /var/lib/cloud/instance/sem/config_scripts_user
 
-REPO=https://github.com/wtsi-ssg/osdataproc.git
+REPO=https://github.com/wtsi-hgi/osdataproc.git
 BRANCH=master
 FOLDER=/tmp/osdataproc
 
