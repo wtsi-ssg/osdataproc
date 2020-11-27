@@ -59,6 +59,20 @@
           owner: "{{ spark_user }}"
           group: "{{ spark_group }}"
 
+- name: Stat (potential) Lustre mount point
+  stat:
+    path: /lustre
+  register: lustre
+
+- name: Symlink Lustre mount point in data directory (if it exists)
+  file:
+    state: link
+    src: "/lustre"
+    dest: "{{ home }}/jupyter/lustre"
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+  when: lustre.stat.exists == True
+
 - name: Generate Jupyter password
   shell: "{{ venv_dir }}/bin/python -c \"from notebook.auth import passwd ; print(passwd('{{ password }}'))\""
   register: jupyter_notebookapp_password
