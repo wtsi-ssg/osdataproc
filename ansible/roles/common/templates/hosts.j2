@@ -1,4 +1,4 @@
-127.0.0.1 localhost
+127.0.0.1 localhost {{ lookup('env', 'CLUSTER_PREFIX') }}-master
 
 {{ spark_master_private_ip }} spark-master
 {% for ip in spark_worker_private_ips %}
