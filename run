@@ -40,6 +40,7 @@ get_apply_vars () {
     exit 1
   fi
 
+  # FIXME Oh Jesus, God, no!...
   tfvars=(flavor_name network_name lustre_network image_name nfs_volume volume_size device_name spark_master_public_ip)
   # Update tfvars variables if set, otherwise use defaults
   for i in "${!tfvars[@]}" ; do

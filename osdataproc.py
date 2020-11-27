@@ -62,7 +62,7 @@ def cli():
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
     parser_create.add_argument('-n', '--num-workers', type=int, help='number of worker nodes')
     parser_create.add_argument('-p', '--public-key', help='path to public key file')
-    parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
+    parser_create.add_argument('-f', '--flavour', '--flavor', help='OpenStack flavour to use')
     parser_create.add_argument('--network-name', help='OpenStack network to use')
     parser_create.add_argument('--lustre-network', help='OpenStack Secure Lustre network to use')
     parser_create.add_argument('-i', '--image-name', help='OpenStack image to use - Ubuntu only')
