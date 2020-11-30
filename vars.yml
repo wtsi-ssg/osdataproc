@@ -23,8 +23,8 @@ osdataproc:
 ###############################################################################
 ## Default software versions
 hadoop_version: 3.2.1
-spark_version: 2.4.5
-hail_version: 0.2.41
+spark_version: 2.4.7
+hail_version: 0.2.60
 
 ## Additional Ubuntu packages to install on the cluster
 extra_pkgs:
