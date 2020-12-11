@@ -29,7 +29,7 @@ monitoring.
 
    ```bash
    source env/bin/activate
-   git clone https://github.com/wtsi-ssg/osdataproc.git
+   git clone https://github.com/wtsi-hgi/osdataproc.git
    cd osdataproc
    pip install .
    ```
