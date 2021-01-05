@@ -31,7 +31,7 @@ monitoring.
    source env/bin/activate
    git clone https://github.com/wtsi-hgi/osdataproc.git
    cd osdataproc
-   pip install .
+   pip install -e .
    ```
 
 4. Make sure you have created an SSH keypair with `ssh-keygen` if you
@@ -172,6 +172,7 @@ for the changes you make to be reflected in the created cluster.
   * [ ] Machine-readable output to communicate status
   * [ ] Allow non-interactive destruction
   * [ ] Update to JupyterLab 3
+  * [ ] Correct distribution to recognise multiple modules
 * [ ] Refactor Ansible playbooks
 * [ ] Resize functionality (larger flavour/more nodes)
 * [ ] Support for other Linux distributions
