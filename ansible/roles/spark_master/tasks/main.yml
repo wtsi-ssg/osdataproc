@@ -27,7 +27,7 @@
           name:
             - "hail=={{ hail_version }}"
             - "pyspark=={{ spark_version }}"
-            - jupyterlab
+            - jupyterlab==2.2.9
             - pyopenssl
           virtualenv: "{{ venv_dir }}"
           virtualenv_command: /usr/bin/python3 -m venv

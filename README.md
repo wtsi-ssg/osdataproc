@@ -170,6 +170,8 @@ for the changes you make to be reflected in the created cluster.
   * [ ] Allow setting of password by environment variable
   * [ ] Use exit codes productively if Terraform/Ansible fail
   * [ ] Machine-readable output to communicate status
+  * [ ] Allow non-interactive destruction
+  * [ ] Update to JupyterLab 3
 * [ ] Refactor Ansible playbooks
 * [ ] Resize functionality (larger flavour/more nodes)
 * [ ] Support for other Linux distributions
