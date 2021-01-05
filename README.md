@@ -164,8 +164,12 @@ for the changes you make to be reflected in the created cluster.
 
 ### To Do
 
-* [ ] Move from `openrc.sh` to `clouds.yaml`
-* [ ] Incorporate `run` script into `osdataproc` Python CLI
+* [ ] Refactor/enhance Python CLI
+  * [ ] Move from `openrc.sh` to `clouds.yaml`
+  * [ ] Incorporate `run` script into `osdataproc` Python CLI
+  * [ ] Allow setting of password by environment variable
+  * [ ] Use exit codes productively if Terraform/Ansible fail
+  * [ ] Machine-readable output to communicate status
 * [ ] Refactor Ansible playbooks
 * [ ] Resize functionality (larger flavour/more nodes)
 * [ ] Support for other Linux distributions
