@@ -168,12 +168,13 @@ for the changes you make to be reflected in the created cluster.
   * [ ] Move from `openrc.sh` to `clouds.yaml`
   * [ ] Incorporate `run` script into `osdataproc` Python CLI
   * [ ] Allow setting of password by environment variable
+  * [ ] Allow multiple public SSH keys
   * [ ] Use exit codes productively if Terraform/Ansible fail
   * [ ] Machine-readable output to communicate status
   * [ ] Allow non-interactive destruction
-  * [ ] Update to JupyterLab 3
-  * [ ] Correct distribution to recognise multiple modules
+  * [ ] Correct distribution to recognise multiple Python modules
 * [ ] Refactor Ansible playbooks
+  * [ ] Update to JupyterLab 3
 * [ ] Resize functionality (larger flavour/more nodes)
 * [ ] Support for other Linux distributions
 
