@@ -19,6 +19,18 @@
 - name: Start Spark history server
   service: name=spark-history-server state=started enabled=yes
 
+- name: Update Python distribution utilities in venv
+  become: yes
+  become_user: "{{ spark_user }}"
+  pip:
+    state: latest
+    name:
+    - pip
+    - setuptools
+    - wheel
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_command: /usr/bin/python3 -m venv
+
 - name: Install python modules in venv
   become: yes
   become_user: "{{ spark_user }}"
@@ -26,7 +38,7 @@
           state: present
           name:
             - "hail=={{ hail_version }}"
-            - "pyspark=={{ spark_version }}"
+            - pyspark~=2.4
             - jupyterlab==2.2.9
             - pyopenssl
           virtualenv: "{{ venv_dir }}"
