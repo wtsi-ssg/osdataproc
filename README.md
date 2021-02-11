@@ -169,6 +169,7 @@ for the changes you make to be reflected in the created cluster.
   * [ ] Incorporate `run` script into `osdataproc` Python CLI
   * [ ] Allow setting of password by environment variable
   * [ ] Allow multiple public SSH keys
+  * [ ] Allow setting of DNS name servers
   * [ ] Use exit codes productively if Terraform/Ansible fail
   * [ ] Machine-readable output to communicate status
   * [ ] Allow non-interactive destruction
