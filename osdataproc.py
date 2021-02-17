@@ -44,11 +44,21 @@ def get_args(args, command):
     run_args = [f'{osdataproc_home}/run', command]
 
     # FIXME The order in which the keys are iterated through matters to
-    # the downstream "run" script, which uses positional arguments. It's
-    # not clear whether this loop is deterministic, or what happens when
-    # a new option is added
-    for key in args:
-        run_args.append(str(args[key]))
+    # the downstream "run" script, which uses positional arguments.
+    # Changed loop to explicit items to match script's expectations.
+    run_args += [
+        str(args["cluster-name"]),
+        str(args["num_workers"]),
+        str(args["public_key"]),
+        str(args["flavour"]),
+        str(args["network_name"]),
+        str(args["lustre_network"]),
+        str(args["image_name"]),
+        str(args["nfs_volume"]),
+        str(args["volume_size"]),
+        str(args["device_name"]),
+        str(args["floating_ip"])
+    ]
 
     return run_args
 

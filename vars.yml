@@ -5,7 +5,7 @@ osdataproc:
   num_workers: 2
   ## Path to public key file
   public_key: ~/.ssh/id_rsa.pub
-  flavor: m2.medium
+  flavour: m2.medium
   network_name: cloudforms_network
   lustre_network:
   image_name: bionic-server
