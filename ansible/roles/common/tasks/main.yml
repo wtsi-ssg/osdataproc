@@ -29,6 +29,12 @@
     insertafter: "[Resolve]"
     line: "Domains=sanger.ac.uk internal.sanger.ac.uk"
 
+- name: Restart systemd resolver
+  become: yes
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted
+
 - name: Update apt cache
   apt: update_cache=yes
 
