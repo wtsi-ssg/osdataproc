@@ -25,7 +25,10 @@ resource "openstack_compute_instance_v2" "spark_worker" {
   key_pair    = openstack_compute_keypair_v2.spark_keypair.id
   user_data   = data.cloudinit_config.user_data.rendered
 
-  network {
-    port = module.networking.worker_ports[count.index]
+  dynamic "network" {
+    for_each = module.networking.workers_ports[count.index]
+    content {
+      port = network.value
+    }
   }
 }

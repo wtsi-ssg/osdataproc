@@ -4,8 +4,11 @@ resource "openstack_compute_instance_v2" "spark_master" {
   flavor_name = var.flavor_name
   key_pair    = openstack_compute_keypair_v2.spark_keypair.id
 
-  network {
-    port = module.networking.master_port
+  dynamic "network" {
+    for_each = module.networking.master_ports
+    content {
+      port = network.value
+    }
   }
 }
 
