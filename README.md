@@ -127,6 +127,9 @@ can also be specified here.
 
 ### Troubleshooting Notes
 
+* Your cluster name should never contain underscore characters; valid
+  choices are alphanumeric characters and dashes.
+
 * If your private key has a passphrase, Ansible will not be able to
   connect to the created instances unless you add your key to
   `ssh-agent` first:
