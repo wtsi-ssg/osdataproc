@@ -75,6 +75,8 @@ osdataproc create [--num-workers]    <Number of desired worker nodes>
                   <cluster_name>
 ```
 
+NOTE: Ensure that the image used has python3.8 as the default version of python. The focal images should work.
+
 `osdataproc create` will output the public IP of your master node when
 the node has been created. You can SSH into this using the public key
 provided:
