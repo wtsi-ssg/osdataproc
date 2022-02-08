@@ -10,16 +10,6 @@
           timeout: 3600
   tags: master
 
-- name: Update apt cache
-  apt: update_cache=yes
-
-- name: Create nfs shared data directory
-  file:
-          state: directory
-          path: "{{ home }}/data"
-          owner: "{{ user }}"
-          group: "{{ group }}"
-
 - name: Include IP addresses
   include_vars:
           file: "../../../terraform/terraform.tfstate.d/{{ lookup('env', 'TF_VAR_cluster_name') }}/outputs.json"
@@ -30,6 +20,30 @@
   become: yes
   template: src=hosts.j2 dest=/etc/hosts
   tags: master
+
+# NOTE Sanger-specific
+- name: Add Sanger domain resolution rule
+  become: yes
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    insertafter: "[Resolve]"
+    line: "Domains=sanger.ac.uk internal.sanger.ac.uk"
+
+- name: Restart systemd resolver
+  become: yes
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Create nfs shared data directory
+  file:
+          state: directory
+          path: "{{ home }}/data"
+          owner: "{{ user }}"
+          group: "{{ group }}"
 
 - name: Wait for automatic system updates
   become: true

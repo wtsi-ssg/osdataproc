@@ -19,6 +19,18 @@
 - name: Start Spark history server
   service: name=spark-history-server state=started enabled=yes
 
+- name: Update Python distribution utilities in venv
+  become: yes
+  become_user: "{{ spark_user }}"
+  pip:
+    state: latest
+    name:
+    - pip
+    - setuptools
+    - wheel
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_command: /usr/bin/python3 -m venv
+
 - name: Install python modules in venv
   become: yes
   become_user: "{{ spark_user }}"
@@ -26,8 +38,8 @@
           state: present
           name:
             - "hail=={{ hail_version }}"
-            - "pyspark=={{ spark_version }}"
-            - jupyterlab
+            - pyspark
+            - jupyterlab==2.2.9
             - pyopenssl
           virtualenv: "{{ venv_dir }}"
           virtualenv_command: /usr/bin/python3 -m venv
@@ -58,6 +70,20 @@
           dest: "{{ home }}/jupyter/working"
           owner: "{{ spark_user }}"
           group: "{{ spark_group }}"
+
+- name: Stat (potential) Lustre mount point
+  stat:
+    path: /lustre
+  register: lustre
+
+- name: Symlink Lustre mount point in data directory (if it exists)
+  file:
+    state: link
+    src: "/lustre"
+    dest: "{{ home }}/jupyter/lustre"
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+  when: lustre.stat.exists == True
 
 - name: Generate Jupyter password
   shell: "{{ venv_dir }}/bin/python -c \"from notebook.auth import passwd ; print(passwd('{{ password }}'))\""

@@ -42,8 +42,24 @@ def act(args, command):
 def get_args(args, command):
     osdataproc_home = os.path.dirname(os.path.realpath(__file__))
     run_args = [f'{osdataproc_home}/run', command]
-    for key in args:
-        run_args.append(str(args[key]))
+
+    # FIXME The order in which the keys are iterated through matters to
+    # the downstream "run" script, which uses positional arguments.
+    # Changed loop to explicit items to match script's expectations.
+    run_args += [
+        str(args["cluster-name"]),
+        str(args["num_workers"]),
+        str(args["public_key"]),
+        str(args["flavour"]),
+        str(args["network_name"]),
+        str(args["lustre_network"]),
+        str(args["image_name"]),
+        str(args["nfs_volume"]),
+        str(args["volume_size"]),
+        str(args["device_name"]),
+        str(args["floating_ip"])
+    ]
+
     return run_args
 
 def cli():
@@ -56,8 +72,9 @@ def cli():
     parser_create.add_argument('cluster-name', help='name of the cluster to create')
     parser_create.add_argument('-n', '--num-workers', type=int, help='number of worker nodes')
     parser_create.add_argument('-p', '--public-key', help='path to public key file')
-    parser_create.add_argument('-f', '--flavor', help='OpenStack flavor to use')
+    parser_create.add_argument('-f', '--flavour', '--flavor', help='OpenStack flavour to use')
     parser_create.add_argument('--network-name', help='OpenStack network to use')
+    parser_create.add_argument('--lustre-network', help='OpenStack Secure Lustre network to use')
     parser_create.add_argument('-i', '--image-name', help='OpenStack image to use - Ubuntu only')
     parser_create.add_argument('-v', '--nfs-volume', help='Name or ID of an nfs volume to attach to the cluster') 
 

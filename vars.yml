@@ -5,8 +5,9 @@ osdataproc:
   num_workers: 2
   ## Path to public key file
   public_key: ~/.ssh/id_rsa.pub
-  flavor: m1.medium
+  flavour: m2.medium
   network_name: cloudforms_network
+  lustre_network:
   image_name: bionic-server
   nfs_volume:
   ## NOTE: volume_size and device_name are mutually exclusive command line
@@ -22,8 +23,8 @@ osdataproc:
 ###############################################################################
 ## Default software versions
 hadoop_version: 3.2.1
-spark_version: 2.4.5
-hail_version: 0.2.41
+spark_version: 3.1.2
+hail_version: 0.2.83
 
 ## Additional Ubuntu packages to install on the cluster
 extra_pkgs:

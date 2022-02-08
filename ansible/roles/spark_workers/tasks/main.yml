@@ -20,7 +20,7 @@
   become_user: "{{ spark_user }}"
   pip:
           state: present
-          name: pyspark
+          name: pyspark~=2.4
           virtualenv: "{{ venv_dir }}"
           virtualenv_command: /usr/bin/python3 -m venv
 

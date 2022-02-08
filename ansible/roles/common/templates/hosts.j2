@@ -1,8 +1,8 @@
-127.0.0.1 localhost
+127.0.0.1 localhost {{ lookup('env', 'CLUSTER_PREFIX') }}-master
 
 {{ spark_master_private_ip }} spark-master
 {% for ip in spark_worker_private_ips %}
-{{ ip }} {{ lookup('env', 'TF_VAR_os_user_name') }}-{{ lookup('env', 'TF_VAR_cluster_name') }}-worker-{{ "%02d"|format(loop.index) }}
+{{ ip }} {{ lookup('env', 'CLUSTER_PREFIX') }}-worker-{{ "%02d" | format(loop.index) }}
 {% endfor %}
 
 # The following lines are desirable for IPv6 capable hosts
